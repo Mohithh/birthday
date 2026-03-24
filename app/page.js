@@ -10,7 +10,7 @@ const CONFIG = {
   photo:      '/ii1.jpeg',               // ← main profile photo
   song0:      'happy-birthday-155461.mp3',                          // welcome page
   song1:      'happy-birthday-254480.mp3',                          // memories page
-  song2:      'happy-birthday-254480.mp3',                          // countdown trigger
+  song2:      'clock-ticking-60-second-countdown-118231.mp3',                          // countdown trigger
   songCD:     'clock-ticking-60-second-countdown-118231.mp3',       // countdown tick
   song3:      'WhatsApp Audio 2025-10-24 at 21.29.27_789c5f74.mp3', // wishes page
   song4:      'WhatsApp Audio 2025-10-24 at 21.29.27_789c5f74.mp3', // dreams page
