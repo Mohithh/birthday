@@ -7,7 +7,7 @@ import Image from 'next/image';
 // ══════════════════════════════════════════════════════════════════════════════
 const CONFIG = {
   name:       'Arti',                 // ← change to any name
-  photo:      '/ii1.jpeg',               // ← main profile photo
+  photo:      '/ii30.jpeg',               // ← main profile photo
   song0:      'happy-birthday-155461.mp3',                          // welcome page
   song1:      'happy-birthday-254480.mp3',                          // memories page
   song2:      'clock-ticking-60-second-countdown-118231.mp3',                          // countdown trigger
@@ -18,10 +18,10 @@ const CONFIG = {
 // ══════════════════════════════════════════════════════════════════════════════
 
 const PHOTOS = [
-  'ii.jpg','img2.jpg','img3.jpg','img4.jpg','img5.jpg','img6.jpg',
-  'img8.jpg','img9.jpg','img10.jpg','img11.jpg','img12.jpg','img13.jpg',
-  'img14.jpg','img15.jpg','img16.jpg','img17.jpg','img18.jpg','img19.jpg',
-  'img20.jpg','img21.jpg','img22.jpg','img23.jpg','img24.jpg',
+  'ii.jpg','ii33.png','ii3.jpeg','ii6.jpeg','ii31.jpeg','ii44.jpeg', 
+  'ii26.jpeg','ii8.jpeg','ii99.jpeg','ii10.jpeg','ii11.jpeg','ii222.jpeg','ii1223.jpeg',
+  'ii32.jpeg','ii155.jpeg','ii16.jpeg','ii30.jpeg','ii18.jpeg','ii19.jpeg',
+  'ii20.jpeg','ii27.jpeg','ii22.jpeg','ii13.jpeg','ii7.jpeg', 
 ];
 
 const DREAM_CARDS = [
@@ -922,8 +922,8 @@ export default function BirthdaySurprise() {
           {/* ════ MOBILE (untouched) ════ */}
           <div className="s3-sc">
             <div className="s3-av s3-in s3-d1">
-              <div className="s3-avr">
-                <Image src={CONFIG.photo} alt={CONFIG.name} width={108} height={108}
+              <div className="s3-avr ">
+                <Image src={CONFIG.photo} alt={CONFIG.name} width={256} height={256}
                   style={{width:'100%',height:'100%',objectFit:'cover',display:'block'}} />
               </div>
             </div>
@@ -1460,4 +1460,4 @@ if (step === 4) return (
 // git add .
 // git commit -m "first commit"
 // git branch -M main
-// git push -u origin main
+// git push -u origin main W  
