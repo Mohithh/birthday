@@ -18,7 +18,7 @@ const CONFIG = {
 // ══════════════════════════════════════════════════════════════════════════════
 
 const PHOTOS = [
-  'ii.jpg','ii33.png','ii3.jpeg','ii6.jpeg','ii31.jpeg','ii44.jpeg', 
+  'ii444.jpeg','ii.jpg','ii33.png','ii3.jpeg','ii6.jpeg','ii31.jpeg','ii44.jpeg', 
   'ii26.jpeg','ii8.jpeg','ii99.jpeg','ii10.jpeg','ii11.jpeg','ii222.jpeg','ii1223.jpeg',
   'ii32.jpeg','ii155.jpeg','ii16.jpeg','ii30.jpeg','ii18.jpeg','ii19.jpeg',
   'ii20.jpeg','ii27.jpeg','ii22.jpeg','ii13.jpeg','ii7.jpeg', 
@@ -1461,3 +1461,7 @@ if (step === 4) return (
 // git commit -m "first commit"
 // git branch -M main
 // git push -u origin main W  
+
+// if error then 
+
+// git push -u origin main
