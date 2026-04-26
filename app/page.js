@@ -1915,8 +1915,8 @@ export default function BirthdaySurprise() {
           <div className="s6-in s6-d5">
             <button className="s6-cta" onClick={restart}>
               🌸 
-              can we turn this into something real Relation,
-something we both grow into?
+              Can We Turn This Into Something Real Relation,
+Something We Both Grow Into?
             </button>
             <button className="s6-skip" onClick={restart}>
               ← go back to the beginning
