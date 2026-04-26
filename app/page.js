@@ -1935,8 +1935,11 @@ something we both grow into?
   return null;
 }
 
+<<<<<<< HEAD
 
 
+=======
+>>>>>>> 7ab46bfc939d8aea41256265ca17e5cd715a01b4
 // git add .
 // git commit -m "first commit"
 // git branch -M main
@@ -1949,4 +1952,8 @@ something we both grow into?
 
 // if error then  
 
+<<<<<<< HEAD
 // git push -u origin main
+=======
+// git push -u origin main
+>>>>>>> 7ab46bfc939d8aea41256265ca17e5cd715a01b4
