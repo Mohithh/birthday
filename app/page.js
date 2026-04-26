@@ -1930,3 +1930,17 @@ export default function BirthdaySurprise() {
 
   return null;
 }
+
+// git add .
+// git commit -m "first commit"
+// git branch -M main
+// git push -u origin main W  
+
+
+
+// for referesh -Remove-Item -Recurse -Force .next
+
+
+// if error then  
+
+// git push -u origin main
