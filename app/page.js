@@ -354,7 +354,7 @@ export default function BirthdaySurprise() {
       <style>{`
         ${FONT}
         *{box-sizing:border-box;margin:0;padding:0}
-        .s1-root{min-height:100dvh;background:#08060f;font-family:'DM Sans',sans-serif;color:#ece8f5;position:relative;overflow-x:hidden}
+        .s1-root{min-height:100dvh;background:#08060f;font-family:'DM Sans',sans-serif;color:#ece8f5;position:relative;overflow-x:hidden;overflow-y:auto}
         .s1-root::before{content:'';position:fixed;inset:0;z-index:0;pointer-events:none;background:radial-gradient(ellipse at 10% 15%,rgba(100,60,180,.22) 0%,transparent 55%),radial-gradient(ellipse at 90% 85%,rgba(60,40,140,.18) 0%,transparent 55%),radial-gradient(ellipse at 55% 40%,rgba(140,80,200,.08) 0%,transparent 60%)}
         .s1-root::after{content:'';position:fixed;inset:0;z-index:0;pointer-events:none;background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.04'/%3E%3C/svg%3E")}
         .s1-dust{position:fixed;border-radius:50%;background:rgba(160,120,255,.4);pointer-events:none;z-index:1;animation:s1fl ease-in-out infinite}
@@ -365,8 +365,8 @@ export default function BirthdaySurprise() {
         .s1-music{position:fixed;top:14px;right:14px;z-index:110;width:40px;height:40px;border-radius:50%;background:rgba(255,255,255,.05);border:1px solid rgba(160,120,255,.25);cursor:pointer;font-size:1rem;display:flex;align-items:center;justify-content:center;backdrop-filter:blur(12px);transition:all .2s}
         .s1-music:active{transform:scale(.88)}
         
-        /* Mobile styles - unchanged */
-        .s1-scroll{position:relative;z-index:2;padding:54px 16px 16px;max-width:540px;margin:0 auto}
+        /* Mobile styles - fixed scrolling */
+        .s1-scroll{position:relative;z-index:2;padding:54px 16px 140px;max-width:540px;margin:0 auto;min-height:100dvh}
         .s1-back{font-family:'DM Sans',sans-serif;font-weight:300;font-size:.82rem;color:rgba(196,168,240,.4);background:transparent;border:none;cursor:pointer;letter-spacing:.04em;padding:4px 0;margin-bottom:20px;display:block;transition:color .2s}
         .s1-back:active{color:rgba(196,168,240,.85)}
         .s1-ey{font-family:'DM Sans',sans-serif;font-weight:300;font-size:clamp(.68rem,2vw,.76rem);letter-spacing:.26em;text-transform:uppercase;color:rgba(160,120,255,.5);text-align:center;margin-bottom:6px}
@@ -375,7 +375,7 @@ export default function BirthdaySurprise() {
         .s1-cap{font-family:'Cormorant Garamond',serif;font-style:italic;font-size:clamp(.88rem,3vw,.98rem);color:rgba(160,120,255,.55);text-align:center;margin-bottom:22px}
         .s1-rule{display:flex;align-items:center;gap:12px;margin:18px 0}
         .s1-rl{flex:1;height:1px;background:linear-gradient(90deg,transparent,rgba(160,120,255,.25),transparent)}
-        .s1-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:7px}
+        .s1-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:7px;margin-bottom:20px}
         @media(min-width:460px){.s1-grid{grid-template-columns:repeat(3,1fr)}}
         .s1-ph{aspect-ratio:1;border-radius:4px;overflow:hidden;position:relative;background:rgba(255,255,255,.03);border:1px solid rgba(160,120,255,.10);transition:transform .22s}
         .s1-ph:active{transform:scale(.96)}
@@ -384,7 +384,7 @@ export default function BirthdaySurprise() {
         .s1-ph:hover::after{opacity:1}
         .s1-ml{position:absolute;bottom:7px;left:8px;font-family:'Cormorant Garamond',serif;font-style:italic;font-size:.64rem;color:rgba(236,232,245,.8);z-index:2;opacity:0;transform:translateY(4px);transition:opacity .28s,transform .28s}
         .s1-ph:hover .s1-ml{opacity:1;transform:translateY(0)}
-        .s1-sticky{position:fixed;bottom:0;left:0;right:0;z-index:100;padding:14px 20px 22px;background:rgba(12,8,24,.82);backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);border-top:1px solid rgba(160,120,255,.14)}
+        .s1-sticky{position:fixed;bottom:0;left:0;right:0;z-index:100;padding:14px 20px 22px;background:rgba(12,8,24,.95);backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);border-top:1px solid rgba(160,120,255,.14)}
         .s1-cta{width:100%;max-width:500px;margin:0 auto;display:flex;align-items:center;justify-content:center;gap:10px;padding:17px 24px;border-radius:16px;border:none;background:linear-gradient(135deg,#6b3fa0 0%,#9b6fd4 60%,#7c4fd4 100%);color:#fff;font-family:'Cormorant Garamond',serif;font-style:italic;font-size:clamp(1.1rem,4.5vw,1.25rem);letter-spacing:.02em;cursor:pointer;position:relative;overflow:hidden;animation:s1glow 2s ease-in-out infinite;transition:transform .15s}
         .s1-cta::before{content:'';position:absolute;top:0;left:-80%;width:55%;height:100%;background:linear-gradient(90deg,transparent,rgba(255,255,255,.2),transparent);animation:s1sw 2.2s ease-in-out infinite}
         @keyframes s1sw{0%{left:-80%}100%{left:130%}}
@@ -404,6 +404,7 @@ export default function BirthdaySurprise() {
             max-width: 1200px;
             padding: 40px 40px 100px;
             margin: 0 auto;
+            min-height: auto;
           }
           
           .s1-back {
@@ -450,6 +451,7 @@ export default function BirthdaySurprise() {
             grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
             gap: 24px;
             margin-top: 32px;
+            margin-bottom: 0;
           }
           
           .s1-ph {
@@ -1912,7 +1914,9 @@ export default function BirthdaySurprise() {
 
           <div className="s6-in s6-d5">
             <button className="s6-cta" onClick={restart}>
-              🌸 maybe… let&apos;s see where it goes
+              🌸 
+              can we turn this into something real Relation,
+something we both grow into?
             </button>
             <button className="s6-skip" onClick={restart}>
               ← go back to the beginning
@@ -1930,3 +1934,19 @@ export default function BirthdaySurprise() {
 
   return null;
 }
+
+
+
+// git add .
+// git commit -m "first commit"
+// git branch -M main
+// git push -u origin main W  
+
+
+
+// for referesh -Remove-Item -Recurse -Force .next
+
+
+// if error then  
+
+// git push -u origin main
