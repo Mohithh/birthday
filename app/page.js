@@ -6,22 +6,24 @@ import Image from 'next/image';
 // ✏️  EDIT ONLY THIS SECTION — change name, photo, and songs here
 // ══════════════════════════════════════════════════════════════════════════════
 const CONFIG = {
-  name:       'Arti',                 // ← change to any name
-  photo:      '/ii30.jpeg',               // ← main profile photo
-  song0:      'happy-birthday-155461.mp3',                          // welcome page
-  song1:      'happy-birthday-254480.mp3',                          // memories page
-  song2:      'clock-ticking-60-second-countdown-118231.mp3',                          // countdown trigger
-  songCD:     'clock-ticking-60-second-countdown-118231.mp3',       // countdown tick
-  song3:      'WhatsApp Audio 2025-10-24 at 21.29.27_789c5f74.mp3', // wishes page
-  song4:      'WhatsApp Audio 2025-10-24 at 21.29.27_789c5f74.mp3', // dreams page
+  name:       'Arti',
+  photo:      '/ii30.jpeg',
+  song0:      'happy-birthday-155461.mp3',
+  song1:      'happy-birthday-254480.mp3',
+  song2:      'clock-ticking-60-second-countdown-118231.mp3',
+  songCD:     'clock-ticking-60-second-countdown-118231.mp3',
+  song3:      'WhatsApp Audio 2025-10-24 at 21.29.27_789c5f74.mp3',
+  song4:      'WhatsApp Audio 2025-10-24 at 21.29.27_789c5f74.mp3',
+  song5:      'WhatsApp Audio 2025-10-24 at 21.29.27_789c5f74.mp3',
+  song6:      'WhatsApp Audio 2025-10-24 at 21.29.27_789c5f74.mp3', // proposal page
 };
 // ══════════════════════════════════════════════════════════════════════════════
 
 const PHOTOS = [
-  'ii444.jpeg','ii.jpg','ii33.png','ii3.jpeg','ii6.jpeg','ii62.jpg','ii44.jpeg', 
+  'ii444.jpeg','ii.jpg','ii33.png','ii3.jpeg','ii6.jpeg','ii62.jpg','ii44.jpeg',
   'ii26.jpeg','ii8.jpeg','ii99.jpeg','ii10.jpeg','ii11.jpeg','ii222.jpeg','ii1223.jpeg',
   'ii61.jpeg','ii155.jpeg','ii16.jpeg','ii30.jpeg','ii18.jpeg','ii19.jpeg',
-  'ii20.jpeg','ii27.jpeg','ii22.jpeg','ii13.jpeg','ii60.jpeg', 
+  'ii20.jpeg','ii27.jpeg','ii22.jpeg','ii13.jpeg','ii60.jpeg',
 ];
 
 const DREAM_CARDS = [
@@ -54,7 +56,14 @@ const CONFETTI_DATA = [
   { l:94, d:0.4, dur:3.7, c:'#c9a44a' },
 ];
 
-const FONT = `@import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,600;1,400;1,600&family=DM+Sans:wght@300;400&display=swap');`;
+const FONT = `@import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,600;1,400;1,600&family=DM+Sans:wght@300;400&family=Dancing+Script:wght@400;600&display=swap');`;
+
+// scroll-to-top helper — call on every step transition
+function scrollToTop() {
+  if (typeof window !== 'undefined') {
+    window.scrollTo({ top: 0, behavior: 'instant' });
+  }
+}
 
 // ─────────────────────────────────────────────────────────────────────────────
 export default function BirthdaySurprise() {
@@ -63,14 +72,15 @@ export default function BirthdaySurprise() {
   const [counting, setCounting] = useState(false);
   const [muted, setMuted]       = useState(false);
   const [mounted, setMounted]   = useState(false);
-  // userStarted: true once user taps the very first button — needed for autoplay policy
   const [userStarted, setUserStarted] = useState(false);
   const audioRef = useRef(null);
   const countRef = useRef(null);
 
   useEffect(() => { setMounted(true); }, []);
 
-  // ── Core play helper ───────────────────────────────────────────────────────
+  // Scroll to top whenever step changes
+  useEffect(() => { scrollToTop(); }, [step]);
+
   const playBg = useCallback((src) => {
     const el = audioRef.current;
     if (!el) return;
@@ -81,14 +91,12 @@ export default function BirthdaySurprise() {
     if (!muted) el.play().catch(() => {});
   }, [muted]);
 
-  // ── Play correct song when step changes (only after user has interacted) ───
   useEffect(() => {
     if (!mounted || counting || !userStarted) return;
-    const map = { 0: CONFIG.song0, 1: CONFIG.song1, 2: CONFIG.song2, 3: CONFIG.song3, 4: CONFIG.song4 };
+    const map = { 0: CONFIG.song0, 1: CONFIG.song1, 2: CONFIG.song2, 3: CONFIG.song3, 4: CONFIG.song4, 5: CONFIG.song5, 6: CONFIG.song6 };
     playBg(map[step] ?? CONFIG.song3);
   }, [step, mounted, counting, userStarted, playBg]);
 
-  // ── Mute toggle ────────────────────────────────────────────────────────────
   const toggleMute = useCallback(() => {
     setMuted(m => {
       const next = !m;
@@ -98,7 +106,6 @@ export default function BirthdaySurprise() {
     });
   }, []);
 
-  // ── First tap: start music then go to step 1 ───────────────────────────────
   const handleStart = useCallback(() => {
     setUserStarted(true);
     const el = audioRef.current;
@@ -111,7 +118,6 @@ export default function BirthdaySurprise() {
     setStep(1);
   }, [muted]);
 
-  // ── Countdown ──────────────────────────────────────────────────────────────
   const startCountdown = useCallback(() => {
     audioRef.current?.pause();
     const el = countRef.current;
@@ -146,7 +152,10 @@ export default function BirthdaySurprise() {
     audioRef.current?.pause();
   }, []);
 
-  // ── Confetti ───────────────────────────────────────────────────────────────
+  const goToStep = useCallback((n) => {
+    setStep(n);
+  }, []);
+
   const Confetti = () => (
     <>
       <style>{`@keyframes cfall{from{transform:translateY(-8px) rotate(0deg);opacity:.8}to{transform:translateY(105dvh) rotate(540deg);opacity:0}}`}</style>
@@ -191,199 +200,97 @@ export default function BirthdaySurprise() {
       <style>{`
         ${FONT}
         *{box-sizing:border-box;margin:0;padding:0}
-
-        .s0-root{
-          min-height:100dvh;background:#020f0f;
-          display:flex;align-items:center;justify-content:center;
-          padding:40px 18px;position:relative;overflow:hidden;
-          font-family:'DM Sans',sans-serif;
-        }
-        .s0-root::before{content:'';position:fixed;inset:0;z-index:0;pointer-events:none;
-          background:radial-gradient(ellipse at 20% 20%,rgba(20,140,120,.22) 0%,transparent 55%),
-                      radial-gradient(ellipse at 80% 80%,rgba(10,100,90,.18) 0%,transparent 55%),
-                      radial-gradient(ellipse at 55% 45%,rgba(0,80,70,.10) 0%,transparent 65%)}
-        .s0-root::after{content:'';position:fixed;inset:0;z-index:0;pointer-events:none;
-          background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.04'/%3E%3C/svg%3E")}
-
+        .s0-root{min-height:100dvh;background:#020f0f;display:flex;align-items:center;justify-content:center;padding:40px 18px;position:relative;overflow:hidden;font-family:'DM Sans',sans-serif}
+        .s0-root::before{content:'';position:fixed;inset:0;z-index:0;pointer-events:none;background:radial-gradient(ellipse at 20% 20%,rgba(20,140,120,.22) 0%,transparent 55%),radial-gradient(ellipse at 80% 80%,rgba(10,100,90,.18) 0%,transparent 55%),radial-gradient(ellipse at 55% 45%,rgba(0,80,70,.10) 0%,transparent 65%)}
+        .s0-root::after{content:'';position:fixed;inset:0;z-index:0;pointer-events:none;background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.04'/%3E%3C/svg%3E")}
         .s0-speck{position:fixed;border-radius:50%;background:rgba(40,200,160,.35);pointer-events:none;z-index:1;animation:s0drift ease-in-out infinite}
         @keyframes s0drift{0%,100%{transform:translateY(0) scale(1);opacity:.18}50%{transform:translateY(-20px) scale(1.3);opacity:.42}}
-
         .s0-prog{position:fixed;top:0;left:0;right:0;height:2px;z-index:99;background:rgba(255,255,255,.04)}
         .s0-pf{height:100%;width:0%;background:linear-gradient(90deg,#0d9980,#50e3c2,#0d9980);background-size:200%;animation:s0sh 2.8s linear infinite}
         @keyframes s0sh{0%{background-position:200% 0}100%{background-position:-200% 0}}
-
         .s0-music{position:fixed;top:14px;right:14px;z-index:99;width:40px;height:40px;border-radius:50%;background:rgba(255,255,255,.05);border:1px solid rgba(40,200,160,.22);cursor:pointer;font-size:1rem;display:flex;align-items:center;justify-content:center;backdrop-filter:blur(12px);transition:transform .2s}
         .s0-music:active{transform:scale(.88)}
-
-        /* ─── MOBILE default: single centered card ─── */
-        .s0-desktop-wrap{
-          position:relative;z-index:2;
-          width:100%;max-width:400px;
-        }
-        .s0-desktop-left{ display:none; }
-        .s0-card{
-          width:100%;
-          background:rgba(255,255,255,.03);border:1px solid rgba(40,200,160,.14);
-          border-radius:4px;padding:44px 26px 40px;
-          backdrop-filter:blur(16px);
-          box-shadow:0 8px 48px rgba(0,0,0,.5),inset 0 1px 0 rgba(255,255,255,.06);
-          position:relative;
-        }
-
-        /* ─── DESKTOP: two-column split at 900px ─── */
+        .s0-desktop-wrap{position:relative;z-index:2;width:100%;max-width:400px}
+        .s0-desktop-left{display:none}
+        .s0-card{width:100%;background:rgba(255,255,255,.03);border:1px solid rgba(40,200,160,.14);border-radius:4px;padding:44px 26px 40px;backdrop-filter:blur(16px);box-shadow:0 8px 48px rgba(0,0,0,.5),inset 0 1px 0 rgba(255,255,255,.06);position:relative}
         @media(min-width:900px){
-          .s0-root{ padding:0; align-items:stretch; }
-
-          .s0-desktop-wrap{
-            max-width:none;width:100%;height:100dvh;
-            display:grid;
-            grid-template-columns:1fr 1fr;
-          }
-
-          /* LEFT — large editorial panel */
-          .s0-desktop-left{
-            display:flex;flex-direction:column;
-            justify-content:center;
-            padding:80px 72px;
-            background:linear-gradient(150deg,rgba(13,153,128,.12) 0%,rgba(0,60,50,.2) 100%);
-            border-right:1px solid rgba(40,200,160,.1);
-            position:relative;overflow:hidden;
-          }
-          .s0-desktop-left::before{
-            content:'';position:absolute;inset:0;
-            background:radial-gradient(ellipse at 25% 55%,rgba(40,200,160,.09) 0%,transparent 60%);
-          }
-
-          .s0-dl-tag{
-            font-family:'DM Sans',sans-serif;font-weight:300;
-            font-size:.72rem;letter-spacing:.3em;text-transform:uppercase;
-            color:rgba(40,200,160,.45);margin-bottom:24px;
-            position:relative;z-index:1;
-          }
-          .s0-dl-name{
-            font-family:'Cormorant Garamond',serif;font-weight:400;
-            line-height:.9;color:#e0f5f0;
-            position:relative;z-index:1;
-          }
-          .s0-dl-name em{
-            font-style:italic;color:#50e3c2;
-            font-size:clamp(4rem,6vw,6.5rem);
-            display:block;margin-bottom:4px;
-          }
-          .s0-dl-name span{
-            font-size:clamp(2rem,3vw,3.2rem);
-            color:rgba(224,245,240,.35);
-            letter-spacing:.06em;display:block;
-          }
-          .s0-dl-divider{
-            width:56px;height:1px;
-            background:linear-gradient(90deg,rgba(40,200,160,.6),transparent);
-            margin:36px 0;position:relative;z-index:1;
-          }
-          .s0-dl-quote{
-            font-family:'Cormorant Garamond',serif;font-style:italic;
-            font-size:clamp(1rem,1.4vw,1.2rem);line-height:1.8;
-            color:rgba(224,245,240,.4);
-            max-width:340px;position:relative;z-index:1;
-          }
-          .s0-dl-steps{
-            display:flex;gap:20px;margin-top:48px;
-            position:relative;z-index:1;
-          }
-          .s0-dl-step{
-            display:flex;flex-direction:column;align-items:center;gap:6px;
-          }
-          .s0-dl-step-dot{
-            width:7px;height:7px;border-radius:50%;
-            background:rgba(40,200,160,.3);border:1px solid rgba(40,200,160,.5);
-          }
-          .s0-dl-step-dot.active{
-            background:#0d9980;
-            box-shadow:0 0 8px rgba(13,153,128,.6);
-          }
-          .s0-dl-step-label{
-            font-family:'DM Sans',sans-serif;font-weight:300;
-            font-size:.6rem;letter-spacing:.12em;text-transform:uppercase;
-            color:rgba(40,200,160,.35);
-          }
-          .s0-dl-step-label.active{ color:rgba(40,200,160,.7); }
-          /* giant watermark */
-          .s0-dl-wm{
-            position:absolute;bottom:-40px;right:-30px;
-            font-size:14rem;opacity:.03;line-height:1;
-            pointer-events:none;user-select:none;
-          }
-
-          /* RIGHT — form panel */
-          .s0-card{
-            border-radius:0;border:none;
-            border-left:1px solid rgba(40,200,160,.07);
-            padding:80px 72px;
-            background:rgba(2,15,15,.6);
-            box-shadow:none;
-            display:flex;flex-direction:column;
-            justify-content:center;
-          }
+          .s0-root{padding:0;align-items:center;justify-content:center}
+          .s0-desktop-wrap{max-width:1200px;width:90%;height:auto;min-height:600px;display:grid;grid-template-columns:1fr 1fr;gap:0;background:rgba(255,255,255,.02);border-radius:24px;overflow:hidden;backdrop-filter:blur(8px);border:1px solid rgba(40,200,160,.1)}
+          .s0-desktop-left{display:flex;flex-direction:column;justify-content:center;padding:60px 48px;background:linear-gradient(135deg,rgba(13,153,128,.08) 0%,rgba(2,15,15,.4) 100%);position:relative;overflow:hidden}
+          .s0-desktop-left::before{content:'';position:absolute;inset:0;background:radial-gradient(ellipse at 30% 40%,rgba(40,200,160,.06) 0%,transparent 70%)}
+          .s0-dl-tag{font-family:'DM Sans',sans-serif;font-weight:300;font-size:.7rem;letter-spacing:.3em;text-transform:uppercase;color:rgba(40,200,160,.5);margin-bottom:20px;position:relative;z-index:1}
+          .s0-dl-name{font-family:'Cormorant Garamond',serif;font-weight:400;line-height:.9;color:#e0f5f0;position:relative;z-index:1}
+          .s0-dl-name em{font-style:italic;color:#50e3c2;font-size:clamp(3rem,4vw,4.5rem);display:block;margin-bottom:8px}
+          .s0-dl-name span{font-size:clamp(1.5rem,2vw,2rem);color:rgba(224,245,240,.3);letter-spacing:.06em;display:block}
+          .s0-dl-divider{width:60px;height:1px;background:linear-gradient(90deg,rgba(40,200,160,.5),rgba(40,200,160,.05));margin:28px 0 24px;position:relative;z-index:1}
+          .s0-dl-quote{font-family:'Cormorant Garamond',serif;font-style:italic;font-size:1rem;line-height:1.7;color:rgba(224,245,240,.45);max-width:320px;position:relative;z-index:1}
+          .s0-dl-steps{display:flex;gap:16px;margin-top:40px;position:relative;z-index:1;flex-wrap:wrap}
+          .s0-dl-step{display:flex;flex-direction:column;align-items:center;gap:6px}
+          .s0-dl-step-dot{width:6px;height:6px;border-radius:50%;background:rgba(40,200,160,.2);border:1px solid rgba(40,200,160,.4)}
+          .s0-dl-step-dot.active{background:#0d9980;box-shadow:0 0 10px rgba(13,153,128,.5)}
+          .s0-dl-step-label{font-family:'DM Sans',sans-serif;font-weight:300;font-size:.55rem;letter-spacing:.1em;text-transform:uppercase;color:rgba(40,200,160,.3)}
+          .s0-dl-step-label.active{color:rgba(40,200,160,.7)}
+          .s0-dl-wm{position:absolute;bottom:-30px;right:-20px;font-size:12rem;opacity:.03;line-height:1;pointer-events:none;user-select:none;transform:rotate(-10deg)}
+          .s0-card{background:transparent;border:none;padding:60px 48px;backdrop-filter:none;box-shadow:none;display:flex;flex-direction:column;justify-content:center}
+          .s0-cn{display:none}
+          .s0-ico{display:none}
+          .s0-ey{text-align:left;font-size:.7rem;margin-bottom:12px}
+          .s0-ttl-mobile{display:none}
+          .s0-sub{text-align:left;font-size:.95rem;margin-bottom:20px}
+          .s0-rule{margin:24px 0}
+          .s0-body{text-align:left;font-size:.9rem;margin-bottom:32px;color:rgba(224,245,240,.55)}
+          .s0-cta{padding:16px 24px;font-size:1.05rem;max-width:280px}
+          .s0-hint{text-align:left}
         }
-
-        /* shared inner styles */
+        @media(min-width:1200px){
+          .s0-desktop-wrap{width:85%;max-width:1300px;min-height:650px}
+          .s0-desktop-left{padding:80px 64px}
+          .s0-card{padding:80px 64px}
+          .s0-dl-name em{font-size:5rem}
+          .s0-dl-name span{font-size:2.2rem}
+          .s0-dl-quote{font-size:1.1rem;max-width:360px}
+          .s0-body{font-size:1rem}
+        }
+        @media(min-width:1600px){
+          .s0-desktop-wrap{width:80%;max-width:1500px;min-height:700px}
+          .s0-desktop-left{padding:100px 80px}
+          .s0-card{padding:100px 80px}
+          .s0-dl-name em{font-size:5.5rem}
+          .s0-cta{padding:18px 28px;font-size:1.1rem}
+        }
         .s0-cn{position:absolute;font-size:1.4rem;opacity:.2;pointer-events:none}
         .s0-cn.tl{top:12px;left:14px;transform:rotate(-15deg)}.s0-cn.tr{top:12px;right:14px;transform:rotate(15deg)}
         .s0-cn.bl{bottom:12px;left:14px;transform:rotate(10deg)}.s0-cn.br{bottom:12px;right:14px;transform:rotate(-10deg)}
-        @media(min-width:900px){ .s0-cn{ display:none } }
-
         @keyframes s0bob{0%,100%{transform:rotate(-5deg) scale(1)}50%{transform:rotate(5deg) scale(1.08)}}
         .s0-ico{font-size:2.8rem;text-align:center;margin-bottom:12px;display:block;animation:s0bob 3.5s ease-in-out infinite}
-        @media(min-width:900px){ .s0-ico{ display:none } }
-
         .s0-ey{font-family:'DM Sans',sans-serif;font-weight:300;font-size:clamp(.68rem,2vw,.76rem);letter-spacing:.26em;text-transform:uppercase;color:rgba(40,200,160,.55);text-align:center;margin-bottom:8px}
-        @media(min-width:900px){ .s0-ey{ text-align:left } }
-
         .s0-ttl-mobile{font-family:'Cormorant Garamond',serif;font-weight:400;font-size:clamp(2.4rem,10vw,3.4rem);line-height:1.08;text-align:center;color:#e0f5f0;margin-bottom:6px}
         .s0-ttl-mobile em{font-style:italic;color:#50e3c2}
-        @media(min-width:900px){ .s0-ttl-mobile{ display:none } }
-
         .s0-sub{font-family:'Cormorant Garamond',serif;font-style:italic;font-size:clamp(.9rem,3vw,1rem);color:rgba(40,200,160,.6);text-align:center;margin-bottom:26px}
-        @media(min-width:900px){ .s0-sub{ text-align:left } }
-
         .s0-rule{display:flex;align-items:center;gap:14px;margin:20px 0}
         .s0-rl{flex:1;height:1px;background:linear-gradient(90deg,transparent,rgba(40,200,160,.28),transparent)}
-
         .s0-body{font-family:'DM Sans',sans-serif;font-weight:300;font-size:clamp(.88rem,3vw,.95rem);color:rgba(224,245,240,.6);text-align:center;line-height:1.75;margin-bottom:30px}
-        @media(min-width:900px){ .s0-body{ text-align:left;font-size:.96rem } }
-
         .s0-cta{width:100%;padding:18px 20px;border-radius:14px;border:none;background:linear-gradient(135deg,#0d9980,#18c4a0);color:#fff;font-family:'Cormorant Garamond',serif;font-style:italic;font-size:clamp(1.05rem,4vw,1.2rem);cursor:pointer;letter-spacing:.02em;display:flex;align-items:center;justify-content:center;gap:10px;animation:s0glow 2s ease-in-out infinite;transition:transform .2s;position:relative;overflow:hidden}
         .s0-cta::after{content:'';position:absolute;top:0;left:-75%;width:50%;height:100%;background:linear-gradient(90deg,transparent,rgba(255,255,255,.18),transparent);animation:s0sw 2.4s ease-in-out infinite}
         @keyframes s0sw{0%{left:-75%}100%{left:125%}}
         @keyframes s0glow{0%,100%{box-shadow:0 4px 20px rgba(13,153,128,.5),0 0 36px rgba(13,153,128,.18)}50%{box-shadow:0 4px 34px rgba(13,153,128,.82),0 0 60px rgba(13,153,128,.36)}}
         .s0-cta:active{transform:scale(.97)}
-
         .s0-arr{display:inline-block;animation:s0ab 1.1s ease-in-out infinite}
         @keyframes s0ab{0%,100%{transform:translateX(0)}50%{transform:translateX(6px)}}
-
         .s0-hint{text-align:center;margin-top:11px;font-family:'DM Sans',sans-serif;font-weight:300;font-size:.72rem;color:rgba(40,200,160,.4);letter-spacing:.08em;animation:s0bl 2.6s ease-in-out infinite}
         @keyframes s0bl{0%,100%{opacity:.4}50%{opacity:.9}}
-
         @keyframes s0up{from{opacity:0;transform:translateY(20px)}to{opacity:1;transform:translateY(0)}}
         .s0-in{animation:s0up .6s ease both}
         .s0-d1{animation-delay:.05s}.s0-d2{animation-delay:.12s}.s0-d3{animation-delay:.19s}.s0-d4{animation-delay:.26s}
       `}</style>
-
       <audio ref={audioRef} loop />
-
       <div className="s0-root">
-        {/* ambient specks */}
         {[{l:8,t:15,sz:3,d:0,dur:5},{l:82,t:22,sz:4,d:1.4,dur:6.2},{l:18,t:70,sz:3,d:2.1,dur:4.6},{l:90,t:68,sz:5,d:.7,dur:5.8},{l:50,t:10,sz:3,d:1.9,dur:4.2},{l:35,t:88,sz:4,d:.4,dur:6.5},{l:70,t:50,sz:3,d:2.6,dur:5.3}].map((s,i) => (
           <div key={i} className="s0-speck" style={{ left:`${s.l}%`,top:`${s.t}%`,width:s.sz,height:s.sz,animationDelay:`${s.d}s`,animationDuration:`${s.dur}s` }} />
         ))}
-
         <div className="s0-prog"><div className="s0-pf" /></div>
         {mounted && <button className="s0-music" onClick={toggleMute}>{muted?'🔇':'🔊'}</button>}
-
-        {/* outer wrapper — single column mobile, two-column desktop */}
         <div className="s0-desktop-wrap">
-
-          {/* ── LEFT panel (desktop only) ── */}
           <div className="s0-desktop-left">
             <p className="s0-dl-tag">a letter just for you</p>
             <h1 className="s0-dl-name">
@@ -396,9 +303,8 @@ export default function BirthdaySurprise() {
               Something special has been pressed<br />
               between these leaves — just for you."
             </p>
-            {/* journey dots */}
             <div className="s0-dl-steps">
-              {['Open','Memories','Countdown','Wishes','Dreams'].map((label,i) => (
+              {['Open','Memories','Countdown','Wishes','Dreams','Letter','Always'].map((label,i) => (
                 <div key={i} className="s0-dl-step">
                   <div className={`s0-dl-step-dot${i===0?' active':''}`} />
                   <span className={`s0-dl-step-label${i===0?' active':''}`}>{label}</span>
@@ -407,37 +313,27 @@ export default function BirthdaySurprise() {
             </div>
             <div className="s0-dl-wm">🌿</div>
           </div>
-
-          {/* ── RIGHT panel — the card (shown on both mobile + desktop) ── */}
           <div className="s0-card">
-            {/* corners — mobile only */}
             <span className="s0-cn tl">🌿</span><span className="s0-cn tr">🍃</span>
             <span className="s0-cn bl">🍂</span><span className="s0-cn br">🌸</span>
-
-            {/* bobbing icon — mobile only */}
             <span className="s0-ico">🌿</span>
-
             <div className="s0-in s0-d1">
               <p className="s0-ey">a letter just for you</p>
-              {/* title shown only on mobile (desktop uses left panel) */}
               <h1 className="s0-ttl-mobile">
                 <em>{CONFIG.name}&apos;s</em><br />Birthday
               </h1>
               <p className="s0-sub">as gentle as a forest morning 🍃</p>
             </div>
-
             <div className="s0-rule s0-in s0-d2">
               <div className="s0-rl" />
               <span style={{fontSize:'.85rem',opacity:.35}}>✦</span>
               <div className="s0-rl" />
             </div>
-
             <p className="s0-body s0-in s0-d3">
               Turn the page to a new chapter.<br />
               Something special has been pressed<br />
               between these leaves — just for you.
             </p>
-
             <div className="s0-in s0-d4">
               <button className="s0-cta" onClick={handleStart}>
                 🌿 Open the Book <span className="s0-arr">→</span>
@@ -445,7 +341,6 @@ export default function BirthdaySurprise() {
               <p className="s0-hint">tap to begin the journey ✦</p>
             </div>
           </div>
-
         </div>
       </div>
     </>
@@ -454,21 +349,23 @@ export default function BirthdaySurprise() {
   // ══════════════════════════════════════════════════════════════════════════
   // STEP 1 — MEMORIES
   // ══════════════════════════════════════════════════════════════════════════
-  if (step === 1) return (
+ if (step === 1) return (
     <>
       <style>{`
         ${FONT}
         *{box-sizing:border-box;margin:0;padding:0}
-        .s1-root{min-height:100dvh;background:#08060f;font-family:'DM Sans',sans-serif;color:#ece8f5;position:relative;overflow-x:hidden;padding-bottom:120px}
+        .s1-root{min-height:100dvh;background:#08060f;font-family:'DM Sans',sans-serif;color:#ece8f5;position:relative;overflow-x:hidden}
         .s1-root::before{content:'';position:fixed;inset:0;z-index:0;pointer-events:none;background:radial-gradient(ellipse at 10% 15%,rgba(100,60,180,.22) 0%,transparent 55%),radial-gradient(ellipse at 90% 85%,rgba(60,40,140,.18) 0%,transparent 55%),radial-gradient(ellipse at 55% 40%,rgba(140,80,200,.08) 0%,transparent 60%)}
         .s1-root::after{content:'';position:fixed;inset:0;z-index:0;pointer-events:none;background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.04'/%3E%3C/svg%3E")}
         .s1-dust{position:fixed;border-radius:50%;background:rgba(160,120,255,.4);pointer-events:none;z-index:1;animation:s1fl ease-in-out infinite}
         @keyframes s1fl{0%,100%{transform:translateY(0) scale(1);opacity:.18}50%{transform:translateY(-22px) scale(1.2);opacity:.45}}
         .s1-prog{position:fixed;top:0;left:0;right:0;height:2px;z-index:99;background:rgba(255,255,255,.04)}
-        .s1-pf{height:100%;width:25%;background:linear-gradient(90deg,#6b3fa0,#a07ad4,#6b3fa0);background-size:200%;animation:s1sh 2.5s linear infinite}
+        .s1-pf{height:100%;width:20%;background:linear-gradient(90deg,#6b3fa0,#a07ad4,#6b3fa0);background-size:200%;animation:s1sh 2.5s linear infinite}
         @keyframes s1sh{0%{background-position:200% 0}100%{background-position:-200% 0}}
-        .s1-music{position:fixed;top:14px;right:14px;z-index:110;width:40px;height:40px;border-radius:50%;background:rgba(255,255,255,.05);border:1px solid rgba(160,120,255,.25);cursor:pointer;font-size:1rem;display:flex;align-items:center;justify-content:center;backdrop-filter:blur(12px);transition:transform .2s}
+        .s1-music{position:fixed;top:14px;right:14px;z-index:110;width:40px;height:40px;border-radius:50%;background:rgba(255,255,255,.05);border:1px solid rgba(160,120,255,.25);cursor:pointer;font-size:1rem;display:flex;align-items:center;justify-content:center;backdrop-filter:blur(12px);transition:all .2s}
         .s1-music:active{transform:scale(.88)}
+        
+        /* Mobile styles - unchanged */
         .s1-scroll{position:relative;z-index:2;padding:54px 16px 16px;max-width:540px;margin:0 auto}
         .s1-back{font-family:'DM Sans',sans-serif;font-weight:300;font-size:.82rem;color:rgba(196,168,240,.4);background:transparent;border:none;cursor:pointer;letter-spacing:.04em;padding:4px 0;margin-bottom:20px;display:block;transition:color .2s}
         .s1-back:active{color:rgba(196,168,240,.85)}
@@ -500,6 +397,154 @@ export default function BirthdaySurprise() {
         @keyframes s1up{from{opacity:0;transform:translateY(16px)}to{opacity:1;transform:translateY(0)}}
         .s1-in{animation:s1up .55s ease both}
         .s1-d1{animation-delay:.04s}.s1-d2{animation-delay:.10s}.s1-d3{animation-delay:.16s}.s1-d4{animation-delay:.22s}
+        
+        /* ===== DESKTOP COMPLETE REWORK ===== */
+        @media(min-width: 900px){
+          .s1-scroll {
+            max-width: 1200px;
+            padding: 40px 40px 100px;
+            margin: 0 auto;
+          }
+          
+          .s1-back {
+            position: fixed;
+            top: 24px;
+            left: 24px;
+            z-index: 200;
+            background: rgba(20, 12, 40, 0.8);
+            backdrop-filter: blur(12px);
+            padding: 10px 20px;
+            border-radius: 40px;
+            border: 1px solid rgba(160,120,255,0.2);
+            font-size: 0.85rem;
+            margin: 0;
+          }
+          
+          .s1-back:hover {
+            color: rgba(196,168,240,1);
+            border-color: rgba(160,120,255,0.4);
+            background: rgba(20, 12, 40, 0.95);
+          }
+          
+          .s1-ey {
+            font-size: 0.75rem;
+            letter-spacing: 0.35em;
+          }
+          
+          .s1-ttl {
+            font-size: 4rem;
+            margin-bottom: 12px;
+          }
+          
+          .s1-cap {
+            font-size: 1.1rem;
+            margin-bottom: 32px;
+          }
+          
+          .s1-rule {
+            max-width: 400px;
+            margin: 32px auto;
+          }
+          
+          .s1-grid {
+            grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+            gap: 24px;
+            margin-top: 32px;
+          }
+          
+          .s1-ph {
+            border-radius: 16px;
+            border: 1px solid rgba(160,120,255,0.15);
+            transition: all 0.3s cubic-bezier(0.2, 0, 0, 1);
+            cursor: pointer;
+          }
+          
+          .s1-ph:hover {
+            transform: translateY(-8px);
+            border-color: rgba(160,120,255,0.4);
+            box-shadow: 0 20px 40px rgba(0,0,0,0.4), 0 0 0 1px rgba(160,120,255,0.1);
+          }
+          
+          .s1-ph::after {
+            background: linear-gradient(to top, rgba(80,40,140,0.8) 0%, transparent 60%);
+            opacity: 0;
+          }
+          
+          .s1-ph:hover::after {
+            opacity: 1;
+          }
+          
+          .s1-ml {
+            font-size: 0.75rem;
+            bottom: 12px;
+            left: 12px;
+            background: rgba(0,0,0,0.6);
+            padding: 4px 8px;
+            border-radius: 20px;
+            backdrop-filter: blur(4px);
+          }
+          
+          .s1-sticky {
+            left: 50%;
+            right: auto;
+            transform: translateX(-50%);
+            width: auto;
+            min-width: 400px;
+            bottom: 24px;
+            border-radius: 60px;
+            background: rgba(12, 8, 24, 0.9);
+            backdrop-filter: blur(24px);
+            border: 1px solid rgba(160,120,255,0.2);
+            padding: 8px 16px 8px 24px;
+            box-shadow: 0 8px 32px rgba(0,0,0,0.4);
+          }
+          
+          .s1-cta {
+            max-width: 400px;
+            padding: 14px 28px;
+            font-size: 1.1rem;
+            border-radius: 60px;
+            background: linear-gradient(135deg, #7b4fc0 0%, #9b6fd4 100%);
+            transition: all 0.3s ease;
+          }
+          
+          .s1-cta:hover {
+            transform: scale(1.02);
+            box-shadow: 0 8px 28px rgba(107,63,160,0.6);
+          }
+          
+          .s1-hint {
+            font-size: 0.7rem;
+            margin-top: 6px;
+          }
+        }
+        
+        @media(min-width: 1400px){
+          .s1-scroll {
+            max-width: 1400px;
+            padding: 48px 48px 100px;
+          }
+          
+          .s1-grid {
+            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+            gap: 28px;
+          }
+          
+          .s1-ttl {
+            font-size: 4.5rem;
+          }
+        }
+        
+        @media(min-width: 1800px){
+          .s1-scroll {
+            max-width: 1600px;
+          }
+          
+          .s1-grid {
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 32px;
+          }
+        }
       `}</style>
       <audio ref={audioRef} loop />
       <div className="s1-root">
@@ -509,7 +554,7 @@ export default function BirthdaySurprise() {
         <div className="s1-prog"><div className="s1-pf" /></div>
         {mounted && <button className="s1-music" onClick={toggleMute}>{muted?'🔇':'🔊'}</button>}
         <div className="s1-scroll">
-          <button className="s1-back s1-in s1-d1" onClick={() => setStep(0)}>← back</button>
+          <button className="s1-back s1-in s1-d1" onClick={() => goToStep(0)}>← back to cover</button>
           <div className="s1-in s1-d2">
             <p className="s1-ey">a collection of moments</p>
             <h2 className="s1-ttl"><em>Memory</em> Lane</h2>
@@ -523,12 +568,12 @@ export default function BirthdaySurprise() {
               <div key={i} className="s1-ph">
                 <Image src={`/${p}`} alt={`Memory ${i+1}`} width={300} height={300} style={{width:'100%',height:'100%',objectFit:'cover',display:'block'}} />
                 <div className="s1-ml">#{i+1}</div>
-              </div> 
+              </div>
             ))}
           </div>
         </div>
         <div className="s1-sticky">
-          <button className="s1-cta" onClick={() => setStep(2)}>
+          <button className="s1-cta" onClick={() => goToStep(2)}>
             Turn the page <span className="s1-arr">→</span>
           </button>
           <p className="s1-hint">scroll through the memories, then tap ✦</p>
@@ -551,7 +596,7 @@ export default function BirthdaySurprise() {
         .s2-speck{position:fixed;border-radius:50%;background:rgba(220,180,80,.4);pointer-events:none;z-index:1;animation:s2dr ease-in-out infinite}
         @keyframes s2dr{0%,100%{transform:translateY(0) scale(1);opacity:.15}50%{transform:translateY(-18px) scale(1.25);opacity:.38}}
         .s2-prog{position:fixed;top:0;left:0;right:0;height:2px;z-index:99;background:rgba(255,255,255,.04)}
-        .s2-pf{height:100%;width:50%;background:linear-gradient(90deg,#c98232,#e8c97a,#c98232);background-size:200%;animation:s2sh 2.8s linear infinite}
+        .s2-pf{height:100%;width:40%;background:linear-gradient(90deg,#c98232,#e8c97a,#c98232);background-size:200%;animation:s2sh 2.8s linear infinite}
         @keyframes s2sh{0%{background-position:200% 0}100%{background-position:-200% 0}}
         .s2-music{position:fixed;top:14px;right:14px;z-index:99;width:40px;height:40px;border-radius:50%;background:rgba(255,255,255,.05);border:1px solid rgba(220,180,80,.22);cursor:pointer;font-size:1rem;display:flex;align-items:center;justify-content:center;backdrop-filter:blur(12px);transition:transform .2s}
         .s2-music:active{transform:scale(.88)}
@@ -610,7 +655,7 @@ export default function BirthdaySurprise() {
               🌸 Start the Countdown <span className="s2-arr">→</span>
             </button>
             <p className="s2-hint">tap when you&apos;re ready ✦</p>
-            <button className="s2-back" onClick={() => setStep(1)}>← back to memories</button>
+            <button className="s2-back" onClick={() => goToStep(1)}>← back to memories</button>
           </div>
         </div>
       </div>
@@ -620,7 +665,7 @@ export default function BirthdaySurprise() {
   // ══════════════════════════════════════════════════════════════════════════
   // STEP 3 — BIRTHDAY WISHES
   // ══════════════════════════════════════════════════════════════════════════
- if (step === 3) {
+  if (step === 3) {
     const wishes = [
       { icon:'📖', line:"You are someone's favourite chapter." },
       { icon:'🌿', line:'Rare. Like a forest path nobody else finds.' },
@@ -634,18 +679,14 @@ export default function BirthdaySurprise() {
         <style>{`
           ${FONT}
           *{box-sizing:border-box;margin:0;padding:0}
-
           .s3-root{min-height:100dvh;background:#0d1a0d;font-family:'DM Sans',sans-serif;color:#e8e0d0;position:relative;overflow-x:hidden}
-          .s3-root::before{content:'';position:fixed;inset:0;z-index:0;pointer-events:none;
-            background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.04'/%3E%3C/svg%3E");opacity:.5}
+          .s3-root::before{content:'';position:fixed;inset:0;z-index:0;pointer-events:none;background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.04'/%3E%3C/svg%3E");opacity:.5}
           .s3-b1{position:fixed;width:380px;height:380px;border-radius:50%;background:radial-gradient(circle,rgba(74,124,89,.18) 0%,transparent 70%);top:-80px;left:-80px;pointer-events:none;z-index:0}
           .s3-b2{position:fixed;width:300px;height:300px;border-radius:50%;background:radial-gradient(circle,rgba(201,164,74,.10) 0%,transparent 70%);bottom:60px;right:-60px;pointer-events:none;z-index:0}
           .s3-music{position:fixed;top:14px;right:14px;z-index:99;width:40px;height:40px;border-radius:50%;background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.14);cursor:pointer;font-size:1rem;display:flex;align-items:center;justify-content:center;backdrop-filter:blur(10px);transition:transform .2s}
           .s3-music:active{transform:scale(.88)}
           .s3-prog{position:fixed;top:0;left:0;right:0;height:2px;z-index:98;background:rgba(255,255,255,.06)}
-          .s3-pf{height:100%;width:75%;background:linear-gradient(90deg,#4a7c59,#c9a44a)}
-
-          /* ════ MOBILE (unchanged) ════ */
+          .s3-pf{height:100%;width:60%;background:linear-gradient(90deg,#4a7c59,#c9a44a)}
           .s3-sc{position:relative;z-index:1;padding:64px 20px 80px;max-width:520px;margin:0 auto}
           .s3-av{display:flex;justify-content:center;margin-bottom:32px}
           .s3-avr{width:108px;height:108px;border-radius:50%;border:2px solid rgba(201,164,74,.6);box-shadow:0 0 0 8px rgba(201,164,74,.08),0 12px 40px rgba(0,0,0,.5);overflow:hidden}
@@ -675,254 +716,64 @@ export default function BirthdaySurprise() {
           .s3-ft{text-align:center;margin-top:40px;padding-top:24px;border-top:1px solid rgba(255,255,255,.06)}
           .s3-fi{font-size:.9rem;opacity:.3;letter-spacing:.3em;margin-bottom:8px}
           .s3-fx{font-family:'Cormorant Garamond',serif;font-style:italic;font-size:.82rem;color:rgba(138,171,122,.45)}
-
           .s3-desk{display:none}
-
-          /* ════ DESKTOP — Book / Broadsheet Spread ════ */
           @media(min-width:960px){
             .s3-sc{display:none}
-            .s3-desk{
-              display:block;
-              position:relative;z-index:1;
-              min-height:100dvh;
-              padding:0 56px 72px;
-              max-width:1200px;
-              margin:0 auto;
-            }
-
-            /* ── Masthead / newspaper header ── */
-            .s3-mast{
-              padding:48px 0 24px;
-              border-bottom:3px solid rgba(201,164,74,.25);
-              margin-bottom:0;
-              display:grid;
-              grid-template-columns:1fr auto 1fr;
-              align-items:end;
-              gap:24px;
-            }
-            .s3-mast-left{
-              font-family:'DM Sans',sans-serif;font-weight:300;
-              font-size:.62rem;letter-spacing:.3em;text-transform:uppercase;
-              color:rgba(138,171,122,.4);
-              align-self:end;padding-bottom:6px;
-            }
+            .s3-desk{display:block;position:relative;z-index:1;min-height:100dvh;padding:0 56px 72px;max-width:1200px;margin:0 auto}
+            .s3-mast{padding:48px 0 24px;border-bottom:3px solid rgba(201,164,74,.25);margin-bottom:0;display:grid;grid-template-columns:1fr auto 1fr;align-items:end;gap:24px}
+            .s3-mast-left{font-family:'DM Sans',sans-serif;font-weight:300;font-size:.62rem;letter-spacing:.3em;text-transform:uppercase;color:rgba(138,171,122,.4);align-self:end;padding-bottom:6px}
             .s3-mast-center{text-align:center}
-            .s3-mast-issue{
-              font-family:'DM Sans',sans-serif;font-weight:300;
-              font-size:.58rem;letter-spacing:.28em;text-transform:uppercase;
-              color:rgba(138,171,122,.35);margin-bottom:8px;display:block;
-            }
-            .s3-mast-name{
-              font-family:'Cormorant Garamond',serif;font-weight:400;
-              font-size:clamp(3.5rem,5.5vw,6rem);
-              line-height:.9;color:#e8e0d0;
-              letter-spacing:-.01em;
-            }
+            .s3-mast-issue{font-family:'DM Sans',sans-serif;font-weight:300;font-size:.58rem;letter-spacing:.28em;text-transform:uppercase;color:rgba(138,171,122,.35);margin-bottom:8px;display:block}
+            .s3-mast-name{font-family:'Cormorant Garamond',serif;font-weight:400;font-size:clamp(3.5rem,5.5vw,6rem);line-height:.9;color:#e8e0d0;letter-spacing:-.01em}
             .s3-mast-name em{font-style:italic;color:#c9a44a}
-            .s3-mast-sub{
-              font-family:'Cormorant Garamond',serif;font-style:italic;
-              font-size:clamp(.9rem,1.3vw,1.15rem);
-              color:rgba(201,132,122,.7);margin-top:6px;display:block;
-            }
-            .s3-mast-right{
-              text-align:right;align-self:end;padding-bottom:6px;
-            }
-            .s3-mast-date{
-              font-family:'Cormorant Garamond',serif;font-style:italic;
-              font-size:.78rem;color:rgba(138,171,122,.35);
-              letter-spacing:.04em;
-            }
-
-            /* thin rule below masthead */
-            .s3-mast-rule{
-              display:flex;align-items:center;gap:0;
-              margin-bottom:36px;
-            }
+            .s3-mast-sub{font-family:'Cormorant Garamond',serif;font-style:italic;font-size:clamp(.9rem,1.3vw,1.15rem);color:rgba(201,132,122,.7);margin-top:6px;display:block}
+            .s3-mast-right{text-align:right;align-self:end;padding-bottom:6px}
+            .s3-mast-date{font-family:'Cormorant Garamond',serif;font-style:italic;font-size:.78rem;color:rgba(138,171,122,.35);letter-spacing:.04em}
+            .s3-mast-rule{display:flex;align-items:center;gap:0;margin-bottom:36px}
             .s3-mast-rl{flex:1;height:1px;background:rgba(201,164,74,.15)}
-            .s3-mast-ornament{
-              font-size:.9rem;opacity:.4;padding:0 12px;
-            }
-
-            /* ── 3-column newspaper grid ── */
-            .s3-cols{
-              display:grid;
-              grid-template-columns:1fr 2px 1fr 2px 1fr;
-              gap:0 32px;
-              align-items:start;
-            }
-            /* column dividers */
-            .s3-col-div{
-              background:rgba(201,164,74,.12);
-              align-self:stretch;
-            }
-
-            /* column 1 — photo + big quote */
-            .s3-col1{}
-            .s3-c1-photo{
-              width:100%;aspect-ratio:.8;
-              overflow:hidden;border-radius:2px;
-              margin-bottom:16px;
-              position:relative;
-            }
-            .s3-c1-photo img{
-              width:100%;height:100%;object-fit:cover;display:block;
-              filter:sepia(.15) brightness(.88);
-            }
-            /* caption under photo */
-            .s3-c1-caption{
-              font-family:'DM Sans',sans-serif;font-weight:300;
-              font-size:.62rem;letter-spacing:.14em;text-transform:uppercase;
-              color:rgba(138,171,122,.4);text-align:center;
-              border-top:1px solid rgba(201,164,74,.12);
-              padding-top:8px;margin-bottom:24px;
-            }
-            /* pull quote */
-            .s3-c1-pull{
-              font-family:'Cormorant Garamond',serif;font-style:italic;
-              font-size:clamp(1.1rem,1.5vw,1.4rem);line-height:1.55;
-              color:rgba(232,224,208,.88);
-              border-top:2px solid rgba(201,164,74,.3);
-              border-bottom:2px solid rgba(201,164,74,.3);
-              padding:18px 0;margin-bottom:12px;
-            }
-            .s3-c1-credit{
-              font-family:'DM Sans',sans-serif;font-weight:300;
-              font-size:.62rem;letter-spacing:.12em;
-              color:rgba(201,164,74,.5);
-            }
-
-            /* column 2 — wishes as typeset paragraphs */
-            .s3-col2{}
-            .s3-col2-head{
-              font-family:'Cormorant Garamond',serif;font-weight:400;
-              font-size:clamp(1.3rem,1.8vw,1.7rem);
-              color:#e8e0d0;margin-bottom:4px;
-              border-bottom:1px solid rgba(201,164,74,.2);
-              padding-bottom:10px;margin-bottom:18px;
-              letter-spacing:.01em;
-            }
+            .s3-mast-ornament{font-size:.9rem;opacity:.4;padding:0 12px}
+            .s3-cols{display:grid;grid-template-columns:1fr 2px 1fr 2px 1fr;gap:0 32px;align-items:start}
+            .s3-col-div{background:rgba(201,164,74,.12);align-self:stretch}
+            .s3-c1-photo{width:100%;aspect-ratio:.8;overflow:hidden;border-radius:2px;margin-bottom:16px;position:relative}
+            .s3-c1-photo img{width:100%;height:100%;object-fit:cover;display:block;filter:sepia(.15) brightness(.88)}
+            .s3-c1-caption{font-family:'DM Sans',sans-serif;font-weight:300;font-size:.62rem;letter-spacing:.14em;text-transform:uppercase;color:rgba(138,171,122,.4);text-align:center;border-top:1px solid rgba(201,164,74,.12);padding-top:8px;margin-bottom:24px}
+            .s3-c1-pull{font-family:'Cormorant Garamond',serif;font-style:italic;font-size:clamp(1.1rem,1.5vw,1.4rem);line-height:1.55;color:rgba(232,224,208,.88);border-top:2px solid rgba(201,164,74,.3);border-bottom:2px solid rgba(201,164,74,.3);padding:18px 0;margin-bottom:12px}
+            .s3-c1-credit{font-family:'DM Sans',sans-serif;font-weight:300;font-size:.62rem;letter-spacing:.12em;color:rgba(201,164,74,.5)}
+            .s3-col2-head{font-family:'Cormorant Garamond',serif;font-weight:400;font-size:clamp(1.3rem,1.8vw,1.7rem);color:#e8e0d0;margin-bottom:4px;border-bottom:1px solid rgba(201,164,74,.2);padding-bottom:10px;margin-bottom:18px;letter-spacing:.01em}
             .s3-col2-head em{font-style:italic;color:rgba(201,164,74,.8)}
-            /* wishes as paragraph lines */
-            .s3-col2-wish{
-              font-family:'DM Sans',sans-serif;font-weight:300;
-              font-size:.88rem;line-height:1.75;
-              color:rgba(232,224,208,.75);
-              padding:12px 0;
-              border-bottom:1px solid rgba(255,255,255,.04);
-              display:flex;align-items:flex-start;gap:10px;
-            }
+            .s3-col2-wish{font-family:'DM Sans',sans-serif;font-weight:300;font-size:.88rem;line-height:1.75;color:rgba(232,224,208,.75);padding:12px 0;border-bottom:1px solid rgba(255,255,255,.04);display:flex;align-items:flex-start;gap:10px}
             .s3-col2-wish:last-child{border-bottom:none}
             .s3-col2-icon{flex-shrink:0;font-size:.95rem;margin-top:2px;opacity:.7}
-            /* prayer as inset box */
-            .s3-col2-prayer{
-              margin-top:20px;
-              padding:16px 14px;
-              background:rgba(201,164,74,.05);
-              border:1px solid rgba(201,164,74,.14);
-            }
-            .s3-col2-prayer-head{
-              font-family:'Cormorant Garamond',serif;font-style:italic;
-              font-size:.88rem;color:rgba(138,171,122,.7);
-              text-align:center;margin-bottom:12px;
-              display:flex;align-items:center;gap:8px;justify-content:center;
-            }
+            .s3-col2-prayer{margin-top:20px;padding:16px 14px;background:rgba(201,164,74,.05);border:1px solid rgba(201,164,74,.14)}
+            .s3-col2-prayer-head{font-family:'Cormorant Garamond',serif;font-style:italic;font-size:.88rem;color:rgba(138,171,122,.7);text-align:center;margin-bottom:12px;display:flex;align-items:center;gap:8px;justify-content:center}
             .s3-col2-prayer-line{flex:1;height:1px;background:rgba(138,171,122,.15)}
-            .s3-col2-pr{
-              font-family:'DM Sans',sans-serif;font-weight:300;
-              font-size:.8rem;color:rgba(232,224,208,.65);
-              line-height:1.65;padding:5px 0;
-              display:flex;gap:8px;
-            }
-
-            /* column 3 — closing + nav */
-            .s3-col3{
-              display:flex;flex-direction:column;
-              gap:0;
-            }
-            /* big decorative initial */
-            .s3-c3-drop{
-              font-family:'Cormorant Garamond',serif;font-weight:400;
-              font-size:5rem;line-height:.85;
-              color:rgba(201,164,74,.18);
-              float:left;margin-right:6px;margin-top:4px;
-            }
-            .s3-c3-body{
-              font-family:'Cormorant Garamond',serif;font-style:italic;
-              font-size:.96rem;line-height:1.8;
-              color:rgba(232,224,208,.55);
-              margin-bottom:28px;
-              clear:both;
-            }
-            /* closing Hindi line as displayed quote */
-            .s3-c3-hindi{
-              font-family:'Cormorant Garamond',serif;font-style:italic;
-              font-size:clamp(1rem,1.4vw,1.2rem);
-              color:rgba(201,164,74,.75);
-              line-height:1.7;
-              border-left:2px solid rgba(201,164,74,.25);
-              padding-left:14px;
-              margin-bottom:32px;
-            }
-            /* footer ornament */
-            .s3-c3-ornament{
-              text-align:center;font-size:.85rem;
-              letter-spacing:.4em;opacity:.2;margin-bottom:24px;
-            }
-            /* nav buttons */
-            .s3-c3-next{
-              width:100%;padding:14px 16px;
-              border:1px solid rgba(201,164,74,.45);
-              background:rgba(201,164,74,.1);color:#e8c97a;
-              font-family:'Cormorant Garamond',serif;font-style:italic;
-              font-size:.94rem;cursor:pointer;letter-spacing:.03em;
-              transition:background .2s;
-              display:flex;align-items:center;justify-content:center;gap:8px;
-              margin-bottom:8px;
-            }
+            .s3-col2-pr{font-family:'DM Sans',sans-serif;font-weight:300;font-size:.8rem;color:rgba(232,224,208,.65);line-height:1.65;padding:5px 0;display:flex;gap:8px}
+            .s3-col3{display:flex;flex-direction:column;gap:0}
+            .s3-c3-drop{font-family:'Cormorant Garamond',serif;font-weight:400;font-size:5rem;line-height:.85;color:rgba(201,164,74,.18);float:left;margin-right:6px;margin-top:4px}
+            .s3-c3-hindi{font-family:'Cormorant Garamond',serif;font-style:italic;font-size:clamp(1rem,1.4vw,1.2rem);color:rgba(201,164,74,.75);line-height:1.7;border-left:2px solid rgba(201,164,74,.25);padding-left:14px;margin-bottom:32px}
+            .s3-c3-ornament{text-align:center;font-size:.85rem;letter-spacing:.4em;opacity:.2;margin-bottom:24px}
+            .s3-c3-next{width:100%;padding:14px 16px;border:1px solid rgba(201,164,74,.45);background:rgba(201,164,74,.1);color:#e8c97a;font-family:'Cormorant Garamond',serif;font-style:italic;font-size:.94rem;cursor:pointer;letter-spacing:.03em;transition:background .2s;display:flex;align-items:center;justify-content:center;gap:8px;margin-bottom:8px}
             .s3-c3-next:active{background:rgba(201,164,74,.22)}
-            .s3-c3-ghost{
-              width:100%;padding:10px;border:none;background:transparent;
-              font-family:'DM Sans',sans-serif;font-weight:300;
-              font-size:.74rem;color:rgba(232,224,208,.25);
-              cursor:pointer;letter-spacing:.04em;transition:color .2s;text-align:center;
-            }
+            .s3-c3-ghost{width:100%;padding:10px;border:none;background:transparent;font-family:'DM Sans',sans-serif;font-weight:300;font-size:.74rem;color:rgba(232,224,208,.25);cursor:pointer;letter-spacing:.04em;transition:color .2s;text-align:center}
             .s3-c3-ghost:active{color:rgba(232,224,208,.65)}
-
-            /* footer row */
-            .s3-foot{
-              margin-top:36px;padding-top:16px;
-              border-top:1px solid rgba(201,164,74,.12);
-              display:flex;justify-content:space-between;align-items:center;
-            }
-            .s3-foot-l,.s3-foot-r{
-              font-family:'DM Sans',sans-serif;font-weight:300;
-              font-size:.58rem;letter-spacing:.22em;text-transform:uppercase;
-              color:rgba(138,171,122,.25);
-            }
-            .s3-foot-center{
-              font-family:'Cormorant Garamond',serif;font-style:italic;
-              font-size:.72rem;color:rgba(138,171,122,.3);
-            }
+            .s3-foot{margin-top:36px;padding-top:16px;border-top:1px solid rgba(201,164,74,.12);display:flex;justify-content:space-between;align-items:center}
+            .s3-foot-l,.s3-foot-r{font-family:'DM Sans',sans-serif;font-weight:300;font-size:.58rem;letter-spacing:.22em;text-transform:uppercase;color:rgba(138,171,122,.25)}
+            .s3-foot-center{font-family:'Cormorant Garamond',serif;font-style:italic;font-size:.72rem;color:rgba(138,171,122,.3)}
           }
-
           @keyframes s3fu{from{opacity:0;transform:translateY(20px)}to{opacity:1;transform:translateY(0)}}
           .s3-in{animation:s3fu .6s ease both}
           .s3-d1{animation-delay:.05s}.s3-d2{animation-delay:.12s}.s3-d3{animation-delay:.19s}
           .s3-d4{animation-delay:.26s}.s3-d5{animation-delay:.33s}.s3-d6{animation-delay:.40s}
         `}</style>
-
         <audio ref={audioRef} loop />
         <Confetti />
-
         <div className="s3-root">
           <div className="s3-b1" /><div className="s3-b2" />
           <div className="s3-prog"><div className="s3-pf" /></div>
           {mounted && <button className="s3-music" onClick={toggleMute}>{muted?'🔇':'🔊'}</button>}
-
-          {/* ════ MOBILE (untouched) ════ */}
           <div className="s3-sc">
             <div className="s3-av s3-in s3-d1">
-              <div className="s3-avr ">
+              <div className="s3-avr">
                 <Image src={CONFIG.photo} alt={CONFIG.name} width={256} height={256}
                   style={{width:'100%',height:'100%',objectFit:'cover',display:'block'}} />
               </div>
@@ -959,48 +810,38 @@ export default function BirthdaySurprise() {
             </div>
             <p className="s3-cl s3-in s3-d5">Aaj ka din tumhare naam —<br />tumhari muskaan, tumhari kahani. 💫</p>
             <div className="s3-bs s3-in s3-d6">
-              <button className="s3-bp" onClick={() => setStep(4)}>📖 Your Next Chapter →</button>
-              <button className="s3-bg" onClick={() => setStep(1)}>↩ walk through memories again</button>
+              <button className="s3-bp" onClick={() => goToStep(4)}>📖 Your Next Chapter →</button>
+              <button className="s3-bg" onClick={() => goToStep(1)}>↩ walk through memories again</button>
             </div>
             <div className="s3-ft s3-in s3-d6">
               <p className="s3-fi">🌿 🍃 🌸 🍂 🌿</p>
               <p className="s3-fx">with all the warmth of a forest morning</p>
             </div>
           </div>
-
-          {/* ════ DESKTOP — Broadsheet / Book spread ════ */} 
           <div className="s3-desk s3-in s3-d1">
-
-            {/* masthead */}
             <div className="s3-mast">
-              <div className="s3-mast-left">I dont know why i do this </div>
+              <div className="s3-mast-left">I dont know why i do this</div>
               <div className="s3-mast-center">
                 <span className="s3-mast-issue">happy birthday</span>
                 <div className="s3-mast-name"><em>{CONFIG.name}</em></div>
                 <span className="s3-mast-sub">a new chapter begins 🎂</span>
               </div>
               <div className="s3-mast-right">
-                <span className="s3-mast-date"> smile Please </span>
+                <span className="s3-mast-date">smile Please</span>
               </div>
             </div>
-
-            {/* thin ornamental rule */}
             <div className="s3-mast-rule">
               <div className="s3-mast-rl"/>
               <span className="s3-mast-ornament">❧ 🌿 ❧</span>
               <div className="s3-mast-rl"/>
             </div>
-
-            {/* 3-column grid */}
             <div className="s3-cols">
-
-              {/* COL 1 — photo + pull quote */}
               <div className="s3-col1">
                 <div className="s3-c1-photo">
                   <Image src={CONFIG.photo} alt={CONFIG.name} width={400} height={500}
                     style={{width:'100%',height:'100%',objectFit:'cover',display:'block',filter:'sepia(.15) brightness(.88)'}} />
                 </div>
-                <p className="s3-c1-caption">{CONFIG.name} · this year's chapter</p>
+                <p className="s3-c1-caption">{CONFIG.name} · this year&apos;s chapter</p>
                 <p className="s3-c1-pull">
                   "Unplanned, like a wildflower<br />
                   pressed inside a library book —<br />
@@ -1008,15 +849,9 @@ export default function BirthdaySurprise() {
                 </p>
                 <p className="s3-c1-credit">— that&apos;s always been you ❤️</p>
               </div>
-
-              {/* divider */}
               <div className="s3-col-div" />
-
-              {/* COL 2 — wishes */}
               <div className="s3-col2">
-                <h2 className="s3-col2-head">
-                  Six things that are <em>true</em>
-                </h2>
+                <h2 className="s3-col2-head">Six things that are <em>true</em></h2>
                 {wishes.map((w,i) => (
                   <div key={i} className="s3-col2-wish">
                     <span className="s3-col2-icon">{w.icon}</span>
@@ -1039,11 +874,7 @@ export default function BirthdaySurprise() {
                   ))}
                 </div>
               </div>
-
-              {/* divider */}
               <div className="s3-col-div" />
-
-              {/* COL 3 — closing + nav */}
               <div className="s3-col3">
                 <div>
                   <span className="s3-c3-drop">A</span>
@@ -1063,23 +894,19 @@ export default function BirthdaySurprise() {
                   tumhari muskaan, tumhari kahani. 💫
                 </div>
                 <div className="s3-c3-ornament">🌿 🍃 🌸 🍂 🌿</div>
-                <button className="s3-c3-next" onClick={() => setStep(4)}>
+                <button className="s3-c3-next" onClick={() => goToStep(4)}>
                   📖 Your Next Chapter →
                 </button>
-                <button className="s3-c3-ghost" onClick={() => setStep(1)}>
+                <button className="s3-c3-ghost" onClick={() => goToStep(1)}>
                   ↩ walk through memories again
                 </button>
               </div>
-
-            </div>{/* end cols */}
-
-            {/* footer bar */}
+            </div>
             <div className="s3-foot">
-              <span className="s3-foot-l">Nothing Nothing </span>
+              <span className="s3-foot-l">Nothing Nothing</span>
               <span className="s3-foot-center">with all the warmth of a forest morning</span>
               <span className="s3-foot-r">a letter pressed in leaves</span>
             </div>
-
           </div>
         </div>
       </>
@@ -1087,386 +914,1019 @@ export default function BirthdaySurprise() {
   }
 
   // ══════════════════════════════════════════════════════════════════════════
-  // STEP 4 — DREAMS & FUTURE
+  // STEP 4 — DREAMS & FUTURE  (fixed desktop layout + opens at top)
   // ══════════════════════════════════════════════════════════════════════════
-if (step === 4) return (
+  if (step === 4) return (
     <>
       <style>{`
         ${FONT}
         *{box-sizing:border-box;margin:0;padding:0}
-
-        .s4-root{min-height:100dvh;background:#1a0f00;font-family:'DM Sans',sans-serif;color:#f0e6d3;position:relative;overflow-x:hidden}
-        .s4-root::before{content:'';position:fixed;inset:0;z-index:0;pointer-events:none;
-          background:radial-gradient(ellipse at 15% 10%,rgba(201,130,50,.22) 0%,transparent 55%),
-                      radial-gradient(ellipse at 85% 80%,rgba(160,80,20,.18) 0%,transparent 55%),
-                      radial-gradient(ellipse at 50% 50%,rgba(120,60,10,.10) 0%,transparent 70%)}
-        .s4-root::after{content:'';position:fixed;inset:0;z-index:0;pointer-events:none;
-          background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.035'/%3E%3C/svg%3E")}
-        .s4-sp{position:fixed;border-radius:50%;pointer-events:none;z-index:1;background:rgba(220,160,60,.55);box-shadow:0 0 6px 2px rgba(220,160,60,.35);animation:s4sk linear infinite}
-        @keyframes s4sk{0%{transform:translateY(0) scale(1);opacity:0}15%{opacity:1}85%{opacity:.6}100%{transform:translateY(-80px) scale(.3);opacity:0}}
-        .s4-prog{position:fixed;top:0;left:0;right:0;height:2px;z-index:99;background:rgba(255,255,255,.05)}
-        .s4-pf{height:100%;width:100%;background:linear-gradient(90deg,#c98232,#e8c97a,#c98232);background-size:200% 100%;animation:s4sh 3s linear infinite}
-        @keyframes s4sh{0%{background-position:200% 0}100%{background-position:-200% 0}}
-        .s4-music{position:fixed;top:14px;right:14px;z-index:99;width:40px;height:40px;border-radius:50%;background:rgba(255,255,255,.06);border:1px solid rgba(220,160,60,.25);cursor:pointer;font-size:1rem;display:flex;align-items:center;justify-content:center;backdrop-filter:blur(12px);transition:transform .2s}
-        .s4-music:active{transform:scale(.88)}
-
-        /* ════ MOBILE (unchanged) ════ */
-        .s4-sc{position:relative;z-index:2;padding:60px 20px 80px;max-width:520px;margin:0 auto}
-        .s4-ey{font-family:'DM Sans',sans-serif;font-weight:300;font-size:clamp(.7rem,2.2vw,.78rem);letter-spacing:.26em;text-transform:uppercase;color:rgba(220,160,60,.6);text-align:center;margin-bottom:8px}
-        .s4-ttl{font-family:'Cormorant Garamond',serif;font-weight:400;font-size:clamp(2.6rem,10vw,4rem);line-height:1.05;text-align:center;color:#f0e6d3;margin-bottom:6px}
-        .s4-ttl em{font-style:italic;color:#e8a832}
-        .s4-sub{font-family:'Cormorant Garamond',serif;font-style:italic;font-size:clamp(.95rem,3.5vw,1.1rem);color:rgba(220,160,60,.7);text-align:center;margin-bottom:36px}
-        .s4-rule{display:flex;align-items:center;gap:14px;margin:28px 0}
-        .s4-rl{flex:1;height:1px;background:linear-gradient(90deg,transparent,rgba(220,160,60,.3),transparent)}
-        .s4-cd{display:flex;align-items:flex-start;gap:16px;padding:18px 16px;margin:10px 0;border-radius:2px;border-left:2px solid rgba(220,160,60,.35);background:rgba(255,255,255,.03);transition:border-color .2s}
-        .s4-cd:active{border-left-color:rgba(220,160,60,.7)}
-        .s4-ci{font-size:1.4rem;flex-shrink:0;width:34px;text-align:center;margin-top:1px}
-        .s4-cb{flex:1}
-        .s4-ct{font-family:'Cormorant Garamond',serif;font-style:italic;font-size:clamp(1rem,3.8vw,1.15rem);color:#e8c97a;margin-bottom:4px;line-height:1.2}
-        .s4-cx{font-family:'DM Sans',sans-serif;font-weight:300;font-size:clamp(.86rem,3vw,.94rem);color:rgba(240,230,211,.75);line-height:1.65}
-        .s4-lt{margin:36px 0;padding:26px 22px;border:1px solid rgba(220,160,60,.18);border-radius:2px;position:relative;background:rgba(201,130,50,.05)}
-        .s4-lt::before{content:'"';position:absolute;top:-18px;left:18px;font-family:'Cormorant Garamond',serif;font-size:4rem;color:rgba(220,160,60,.25);line-height:1}
-        .s4-lx{font-family:'Cormorant Garamond',serif;font-style:italic;font-size:clamp(1.05rem,4vw,1.2rem);color:rgba(240,230,211,.88);line-height:1.75}
-        .s4-lx span{color:#e8a832;display:block;margin-top:14px}
-        .s4-vs{font-family:'Cormorant Garamond',serif;font-style:italic;font-size:clamp(1.05rem,4vw,1.2rem);color:rgba(240,230,211,.8);text-align:center;line-height:1.75;margin:32px 0}
-        .s4-vs strong{font-style:normal;color:#e8a832;font-weight:600}
-        .s4-bp{width:100%;padding:15px 20px;border-radius:2px;border:1px solid rgba(220,160,60,.45);background:rgba(220,160,60,.1);color:#e8c97a;font-family:'Cormorant Garamond',serif;font-style:italic;font-size:clamp(1rem,3.5vw,1.1rem);cursor:pointer;letter-spacing:.02em;transition:background .2s;display:flex;align-items:center;justify-content:center;gap:8px}
-        .s4-bp:active{background:rgba(220,160,60,.2)}
-        .s4-bg{width:100%;padding:12px 20px;border-radius:2px;border:1px solid rgba(255,255,255,.08);background:transparent;color:rgba(240,230,211,.4);font-family:'DM Sans',sans-serif;font-weight:300;font-size:.86rem;cursor:pointer;letter-spacing:.04em}
-        .s4-bg:active{color:rgba(240,230,211,.75)}
-        .s4-bs{display:flex;flex-direction:column;gap:10px;margin-top:36px}
-        .s4-ft{text-align:center;margin-top:44px;padding-top:24px;border-top:1px solid rgba(255,255,255,.05)}
-        .s4-fi{font-size:.9rem;opacity:.25;letter-spacing:.3em;margin-bottom:8px}
-        .s4-fx{font-family:'Cormorant Garamond',serif;font-style:italic;font-size:.82rem;color:rgba(220,160,60,.35)}
-
-        /* desktop hidden on mobile */
-        .s4-desk{display:none}
-
-        /* ════ DESKTOP ════ */
-        @media(min-width:960px){
-          .s4-sc{display:none}
-          .s4-desk{
-            display:block;
-            position:relative;z-index:2;
-            padding:0;
+        
+        .s4-root{
+          min-height:100dvh;
+          background: linear-gradient(135deg, #1a0f00 0%, #2a1a08 100%);
+          font-family:'DM Sans',sans-serif;
+          color:#f0e6d3;
+          position:relative;
+          overflow-x:hidden;
+        }
+        
+        .s4-root::before{
+          content:'';
+          position:fixed;
+          inset:0;
+          z-index:0;
+          pointer-events:none;
+          background: 
+            radial-gradient(ellipse at 20% 30%, rgba(232,168,50,0.08) 0%, transparent 50%),
+            radial-gradient(ellipse at 80% 70%, rgba(201,130,50,0.06) 0%, transparent 50%),
+            repeating-linear-gradient(45deg, rgba(232,168,50,0.02) 0px, rgba(232,168,50,0.02) 2px, transparent 2px, transparent 8px);
+        }
+        
+        .s4-root::after{
+          content:'';
+          position:fixed;
+          inset:0;
+          z-index:0;
+          pointer-events:none;
+          background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.025'/%3E%3C/svg%3E")
+        }
+        
+        /* floating particles */
+        .s4-sp{
+          position:fixed;
+          border-radius:50%;
+          pointer-events:none;
+          z-index:1;
+          background:rgba(232,168,50,0.4);
+          box-shadow:0 0 10px 3px rgba(232,168,50,0.2);
+          animation:s4sk linear infinite;
+        }
+        
+        @keyframes s4sk{
+          0%{transform:translateY(100vh) scale(1);opacity:0}
+          10%{opacity:0.6}
+          90%{opacity:0.3}
+          100%{transform:translateY(-20vh) scale(0.3);opacity:0}
+        }
+        
+        .s4-prog{
+          position:fixed;
+          top:0;
+          left:0;
+          right:0;
+          height:2px;
+          z-index:99;
+          background:rgba(255,255,255,.05)
+        }
+        
+        .s4-pf{
+          height:100%;
+          width:80%;
+          background:linear-gradient(90deg,#c98232,#e8c97a,#c98232);
+          background-size:200% 100%;
+          animation:s4sh 3s linear infinite;
+          border-radius:0 2px 2px 0;
+        }
+        
+        @keyframes s4sh{
+          0%{background-position:200% 0}
+          100%{background-position:-200% 0}
+        }
+        
+        .s4-music{
+          position:fixed;
+          top:clamp(16px, 3vw, 24px);
+          right:clamp(16px, 3vw, 24px);
+          z-index:99;
+          width:clamp(40px, 5vw, 48px);
+          height:clamp(40px, 5vw, 48px);
+          border-radius:50%;
+          background:rgba(255,255,255,.08);
+          border:1px solid rgba(232,168,50,.3);
+          cursor:pointer;
+          font-size:clamp(1rem, 2vw, 1.2rem);
+          display:flex;
+          align-items:center;
+          justify-content:center;
+          backdrop-filter:blur(12px);
+          transition:all .3s ease;
+        }
+        
+        .s4-music:hover{
+          transform:scale(1.05);
+          background:rgba(232,168,50,.15);
+          border-color:rgba(232,168,50,.5);
+        }
+        
+        /* Main container - responsive */
+        .s4-container{
+          position:relative;
+          z-index:2;
+          max-width:1400px;
+          margin:0 auto;
+          padding:clamp(40px, 6vw, 80px) clamp(20px, 5vw, 60px);
+        }
+        
+        /* Hero Section */
+        .s4-hero{
+          text-align:center;
+          margin-bottom:clamp(48px, 8vw, 80px);
+        }
+        
+        .s4-eyebrow{
+          font-family:'DM Sans',sans-serif;
+          font-weight:300;
+          font-size:clamp(0.7rem, 2vw, 0.85rem);
+          letter-spacing:0.3em;
+          text-transform:uppercase;
+          color:rgba(232,168,50,0.7);
+          margin-bottom:clamp(12px, 2vw, 20px);
+          display:inline-block;
+          background:rgba(232,168,50,0.1);
+          padding:6px 16px;
+          border-radius:30px;
+          backdrop-filter:blur(8px);
+        }
+        
+        .s4-title{
+          font-family:'Cormorant Garamond',serif;
+          font-weight:400;
+          font-size:clamp(2.5rem, 8vw, 5rem);
+          line-height:1.1;
+          color:#f0e6d3;
+          margin-bottom:clamp(16px, 3vw, 24px);
+        }
+        
+        .s4-title em{
+          font-style:italic;
+          color:#e8a832;
+          display:inline-block;
+        }
+        
+        .s4-subtitle{
+          font-family:'Cormorant Garamond',serif;
+          font-style:italic;
+          font-size:clamp(1rem, 3vw, 1.25rem);
+          color:rgba(232,168,50,0.6);
+          max-width:600px;
+          margin:0 auto;
+        }
+        
+        /* Divider */
+        .s4-divider{
+          display:flex;
+          align-items:center;
+          justify-content:center;
+          gap:clamp(16px, 3vw, 24px);
+          margin:clamp(32px, 5vw, 48px) 0;
+        }
+        
+        .s4-divider-line{
+          flex:1;
+          height:1px;
+          max-width:200px;
+          background:linear-gradient(90deg, transparent, rgba(232,168,50,0.3), transparent);
+        }
+        
+        .s4-divider-icon{
+          font-size:clamp(1rem, 2vw, 1.2rem);
+          opacity:0.4;
+        }
+        
+        /* Dream Cards Grid - Responsive */
+        .s4-grid{
+          display:grid;
+          grid-template-columns:repeat(auto-fit, minmax(min(100%, 320px), 1fr));
+          gap:clamp(20px, 3vw, 32px);
+          margin:clamp(32px, 5vw, 48px) 0;
+        }
+        
+        .s4-card{
+          background:rgba(255,255,255,0.03);
+          border:1px solid rgba(232,168,50,0.15);
+          border-radius:12px;
+          padding:clamp(24px, 4vw, 32px);
+          transition:all 0.3s ease;
+          position:relative;
+          overflow:hidden;
+        }
+        
+        .s4-card:hover{
+          border-color:rgba(232,168,50,0.4);
+          transform:translateY(-4px);
+          background:rgba(255,255,255,0.05);
+        }
+        
+        .s4-card-icon{
+          font-size:clamp(2rem, 5vw, 2.5rem);
+          display:block;
+          margin-bottom:clamp(16px, 3vw, 20px);
+        }
+        
+        .s4-card-title{
+          font-family:'Cormorant Garamond',serif;
+          font-style:italic;
+          font-size:clamp(1.1rem, 3vw, 1.3rem);
+          color:#e8c97a;
+          margin-bottom:clamp(8px, 2vw, 12px);
+          font-weight:500;
+        }
+        
+        .s4-card-text{
+          font-family:'DM Sans',sans-serif;
+          font-weight:300;
+          font-size:clamp(0.85rem, 2.5vw, 0.95rem);
+          color:rgba(240,230,211,0.7);
+          line-height:1.6;
+        }
+        
+        /* Two Column Layout */
+        .s4-two-col{
+          display:grid;
+          grid-template-columns:repeat(auto-fit, minmax(min(100%, 400px), 1fr));
+          gap:clamp(24px, 4vw, 48px);
+          margin:clamp(40px, 6vw, 64px) 0;
+        }
+        
+        /* Letter Box */
+        .s4-letter{
+          background:rgba(201,130,50,0.05);
+          border:1px solid rgba(232,168,50,0.2);
+          border-radius:16px;
+          padding:clamp(28px, 5vw, 40px);
+          position:relative;
+        }
+        
+        .s4-letter-quote{
+          font-family:'Cormorant Garamond',serif;
+          font-style:italic;
+          font-size:clamp(1rem, 3.5vw, 1.2rem);
+          color:rgba(240,230,211,0.85);
+          line-height:1.8;
+          position:relative;
+        }
+        
+        .s4-letter-quote::before{
+          content:'"';
+          position:absolute;
+          top:-20px;
+          left:-10px;
+          font-family:'Cormorant Garamond',serif;
+          font-size:clamp(3rem, 6vw, 4rem);
+          color:rgba(232,168,50,0.2);
+          line-height:1;
+        }
+        
+        .s4-letter-signature{
+          color:#e8a832;
+          display:block;
+          margin-top:clamp(20px, 4vw, 28px);
+          font-size:clamp(0.9rem, 2.5vw, 1rem);
+        }
+        
+        /* Verse Box */
+        .s4-verse{
+          background:linear-gradient(135deg, rgba(232,168,50,0.05) 0%, rgba(201,130,50,0.02) 100%);
+          border-radius:16px;
+          padding:clamp(28px, 5vw, 40px);
+          text-align:center;
+          display:flex;
+          flex-direction:column;
+          justify-content:center;
+        }
+        
+        .s4-verse-text{
+          font-family:'Cormorant Garamond',serif;
+          font-style:italic;
+          font-size:clamp(1rem, 3.5vw, 1.25rem);
+          color:rgba(240,230,211,0.75);
+          line-height:1.9;
+        }
+        
+        .s4-verse-highlight{
+          display:block;
+          font-style:normal;
+          color:#e8a832;
+          font-weight:600;
+          font-size:clamp(1.1rem, 4vw, 1.4rem);
+          margin:clamp(12px, 3vw, 20px) 0;
+        }
+        
+        /* Buttons */
+        .s4-buttons{
+          display:flex;
+          flex-direction:column;
+          gap:16px;
+          max-width:400px;
+          margin:clamp(40px, 6vw, 64px) auto 0;
+        }
+        
+        .s4-btn-primary{
+          width:100%;
+          padding:clamp(14px, 3vw, 18px);
+          border-radius:40px;
+          border:1px solid rgba(232,168,50,0.5);
+          background:rgba(232,168,50,0.1);
+          color:#e8c97a;
+          font-family:'Cormorant Garamond',serif;
+          font-style:italic;
+          font-size:clamp(1rem, 3vw, 1.15rem);
+          cursor:pointer;
+          transition:all 0.3s ease;
+          display:flex;
+          align-items:center;
+          justify-content:center;
+          gap:8px;
+        }
+        
+        .s4-btn-primary:hover{
+          background:rgba(232,168,50,0.2);
+          transform:translateY(-2px);
+          border-color:rgba(232,168,50,0.7);
+        }
+        
+        .s4-btn-secondary{
+          width:100%;
+          padding:clamp(12px, 2.5vw, 16px);
+          border-radius:40px;
+          border:1px solid rgba(255,255,255,0.1);
+          background:transparent;
+          color:rgba(240,230,211,0.5);
+          font-family:'DM Sans',sans-serif;
+          font-weight:300;
+          font-size:clamp(0.85rem, 2.5vw, 0.95rem);
+          cursor:pointer;
+          transition:all 0.3s ease;
+        }
+        
+        .s4-btn-secondary:hover{
+          color:rgba(240,230,211,0.8);
+          border-color:rgba(255,255,255,0.2);
+        }
+        
+        /* Footer */
+        .s4-footer{
+          text-align:center;
+          margin-top:clamp(48px, 8vw, 80px);
+          padding-top:clamp(32px, 5vw, 48px);
+          border-top:1px solid rgba(255,255,255,0.05);
+        }
+        
+        .s4-footer-icon{
+          font-size:clamp(0.8rem, 2vw, 1rem);
+          letter-spacing:0.3em;
+          opacity:0.25;
+          margin-bottom:12px;
+        }
+        
+        .s4-footer-text{
+          font-family:'Cormorant Garamond',serif;
+          font-style:italic;
+          font-size:clamp(0.75rem, 2vw, 0.85rem);
+          color:rgba(232,168,50,0.35);
+        }
+        
+        /* Animations */
+        @keyframes s4up{
+          from{
+            opacity:0;
+            transform:translateY(30px);
           }
-
-          /* ── Section 1: hero header ── */
-          .s4-hero{
-            padding:72px 80px 56px;
-            display:flex;
-            align-items:flex-end;
-            justify-content:space-between;
-            gap:40px;
-            border-bottom:1px solid rgba(220,160,60,.1);
-          }
-          .s4-hero-left{}
-          .s4-hero-tag{
-            display:block;font-family:'DM Sans',sans-serif;font-weight:300;
-            font-size:.62rem;letter-spacing:.32em;text-transform:uppercase;
-            color:rgba(220,160,60,.45);margin-bottom:14px;
-          }
-          .s4-hero-title{
-            font-family:'Cormorant Garamond',serif;font-weight:400;
-            font-size:clamp(4rem,6vw,7rem);line-height:.88;
-            color:#f0e6d3;
-          }
-          .s4-hero-title em{font-style:italic;color:#e8a832;display:block}
-          .s4-hero-right{
-            max-width:380px;flex-shrink:0;
-            text-align:right;padding-bottom:8px;
-          }
-          .s4-hero-sub{
-            font-family:'Cormorant Garamond',serif;font-style:italic;
-            font-size:1.05rem;line-height:1.7;
-            color:rgba(240,230,211,.45);margin-bottom:0;
-          }
-          /* thin gold rule below hero */
-          .s4-hero-rule{
-            width:80px;height:1px;
-            background:rgba(220,160,60,.35);
-            margin-left:auto;margin-top:12px;
-          }
-
-          /* ── Section 2: staggered card grid ── */
-          .s4-grid{
-            display:grid;
-            grid-template-columns:repeat(3,1fr);
-            padding:0 80px;
-            border-bottom:1px solid rgba(220,160,60,.08);
-          }
-          .s4-gcard{
-            padding:40px 32px 40px 0;
-            border-right:1px solid rgba(220,160,60,.08);
-            position:relative;
-          }
-          .s4-gcard:last-child{border-right:none;padding-right:0;padding-left:32px}
-          .s4-gcard:nth-child(2){padding-left:32px}
-          /* stagger: 2nd col down, 3rd col even further */
-          .s4-gcard:nth-child(2){padding-top:72px}
-          .s4-gcard:nth-child(3){padding-top:112px}
-          .s4-gcard:nth-child(4){padding-top:56px}
-          .s4-gcard:nth-child(5){padding-top:88px}
-          .s4-gcard:nth-child(6){padding-top:48px}
-
-          /* large icon */
-          .s4-gcard-icon{
-            font-size:2rem;margin-bottom:16px;display:block;
-            opacity:.8;
-          }
-          /* card number */
-          .s4-gcard-num{
-            font-family:'Cormorant Garamond',serif;font-weight:400;
-            font-size:3.5rem;line-height:1;
-            color:rgba(220,160,60,.08);
-            position:absolute;top:32px;right:24px;
-          }
-          .s4-gcard-title{
-            font-family:'Cormorant Garamond',serif;font-style:italic;
-            font-size:1.15rem;color:#e8c97a;margin-bottom:8px;line-height:1.2;
-          }
-          .s4-gcard-line{
-            font-family:'DM Sans',sans-serif;font-weight:300;
-            font-size:.88rem;color:rgba(240,230,211,.6);line-height:1.7;
-          }
-
-          /* ── Section 3: full-width letter + closing ── */
-          .s4-letter-section{
-            padding:64px 80px;
-            display:grid;
-            grid-template-columns:1fr 1fr;
-            gap:80px;
-            align-items:center;
-            border-bottom:1px solid rgba(220,160,60,.08);
-          }
-          .s4-letter-left{}
-          .s4-letter-ornament{
-            font-size:.8rem;opacity:.3;letter-spacing:.4em;margin-bottom:20px;display:block;
-          }
-          /* huge watermark quote mark */
-          .s4-letter-box{
-            position:relative;
-            padding:28px 28px 28px 32px;
-            border:1px solid rgba(220,160,60,.16);
-            background:rgba(201,130,50,.04);
-          }
-          .s4-letter-box::before{
-            content:'"';
-            position:absolute;top:-22px;left:16px;
-            font-family:'Cormorant Garamond',serif;
-            font-size:5rem;color:rgba(220,160,60,.22);line-height:1;
-          }
-          .s4-letter-text{
-            font-family:'Cormorant Garamond',serif;font-style:italic;
-            font-size:1.15rem;color:rgba(240,230,211,.85);line-height:1.8;
-          }
-          .s4-letter-text span{color:#e8a832;display:block;margin-top:16px;font-size:1.05rem}
-
-          .s4-letter-right{text-align:center}
-          /* big hindi verse */
-          .s4-verse-big{
-            font-family:'Cormorant Garamond',serif;font-style:italic;
-            font-size:clamp(1.1rem,1.8vw,1.5rem);
-            color:rgba(240,230,211,.7);line-height:1.85;
-            margin-bottom:28px;
-          }
-          .s4-verse-big strong{
-            display:block;font-style:normal;
-            color:#e8a832;font-weight:600;
-            font-size:clamp(1.2rem,2vw,1.65rem);
-            margin:8px 0;
-          }
-
-          /* ── Section 4: nav footer ── */
-          .s4-nav-section{
-            padding:48px 80px;
-            display:flex;
-            align-items:center;
-            justify-content:space-between;
-            gap:32px;
-          }
-          .s4-nav-ornament{
-            font-family:'Cormorant Garamond',serif;font-style:italic;
-            font-size:.82rem;color:rgba(220,160,60,.3);
-            flex:1;
-          }
-          .s4-nav-btns{
-            display:flex;gap:12px;
-          }
-          .s4-nav-primary{
-            padding:14px 28px;border-radius:2px;
-            border:1px solid rgba(220,160,60,.45);
-            background:rgba(220,160,60,.1);color:#e8c97a;
-            font-family:'Cormorant Garamond',serif;font-style:italic;
-            font-size:1rem;cursor:pointer;letter-spacing:.02em;
-            transition:background .2s;white-space:nowrap;
-          }
-          .s4-nav-primary:active{background:rgba(220,160,60,.2)}
-          .s4-nav-ghost{
-            padding:14px 24px;border-radius:2px;
-            border:1px solid rgba(255,255,255,.08);background:transparent;
-            color:rgba(240,230,211,.35);
-            font-family:'DM Sans',sans-serif;font-weight:300;
-            font-size:.86rem;cursor:pointer;letter-spacing:.04em;
-            transition:color .2s;white-space:nowrap;
-          }
-          .s4-nav-ghost:active{color:rgba(240,230,211,.7)}
-          .s4-nav-right{
-            font-family:'DM Sans',sans-serif;font-weight:300;
-            font-size:.58rem;letter-spacing:.22em;text-transform:uppercase;
-            color:rgba(220,160,60,.22);text-align:right;flex:1;
+          to{
+            opacity:1;
+            transform:translateY(0);
           }
         }
-
-        @keyframes s4up{from{opacity:0;transform:translateY(18px)}to{opacity:1;transform:translateY(0)}}
-        .s4-in{animation:s4up .6s ease both}
-        .s4-d1{animation-delay:.04s}.s4-d2{animation-delay:.10s}.s4-d3{animation-delay:.16s}
-        .s4-d4{animation-delay:.22s}.s4-d5{animation-delay:.28s}.s4-d6{animation-delay:.34s}
+        
+        .s4-in{
+          animation:s4up 0.7s ease forwards;
+          opacity:0;
+        }
+        
+        .s4-d1{animation-delay:0.05s}
+        .s4-d2{animation-delay:0.12s}
+        .s4-d3{animation-delay:0.19s}
+        .s4-d4{animation-delay:0.26s}
+        .s4-d5{animation-delay:0.33s}
+        .s4-d6{animation-delay:0.40s}
+        
+        /* Tablet optimizations */
+        @media(min-width: 768px){
+          .s4-buttons{
+            flex-direction:row;
+            max-width:600px;
+          }
+          
+          .s4-card{
+            padding:32px;
+          }
+        }
+        
+        /* Desktop optimizations */
+        @media(min-width: 1024px){
+          .s4-container{
+            padding:60px 40px;
+          }
+          
+          .s4-grid{
+            gap:32px;
+          }
+          
+          .s4-btn-primary:hover{
+            transform:translateY(-3px);
+          }
+        }
+        
+        /* Large screens */
+        @media(min-width: 1440px){
+          .s4-container{
+            padding:80px 60px;
+          }
+          
+          .s4-grid{
+            gap:40px;
+          }
+          
+          .s4-card{
+            padding:40px;
+          }
+        }
       `}</style>
-
       <audio ref={audioRef} loop />
       <Confetti />
-
       <div className="s4-root">
-        {[{l:10,t:20,w:3,d:0,dur:4.5},{l:30,t:60,w:4,d:1.2,dur:5.5},{l:55,t:35,w:3,d:.6,dur:4},{l:72,t:75,w:5,d:2,dur:6},{l:88,t:20,w:3,d:.3,dur:5},{l:20,t:85,w:4,d:1.8,dur:4.8},{l:65,t:50,w:3,d:.9,dur:5.2}].map((s,i) => (
-          <div key={i} className="s4-sp" style={{ left:`${s.l}%`,top:`${s.t}%`,width:s.w,height:s.w,animationDelay:`${s.d}s`,animationDuration:`${s.dur}s` }} />
+        {/* Floating particles */}
+        {[
+          {l:15,t:20,w:3,d:0,dur:6},{l:35,t:60,w:4,d:1.5,dur:7},{l:55,t:35,w:3,d:0.8,dur:5.5},
+          {l:72,t:75,w:5,d:2.5,dur:8},{l:88,t:20,w:3,d:0.4,dur:6.5},{l:25,t:85,w:4,d:2,dur:5},
+          {l:65,t:50,w:3,d:1.2,dur:7},{l:92,t:45,w:2.5,d:3,dur:6.8},{l:8,t:70,w:3.5,d:1.8,dur:7.2}
+        ].map((s,i) => (
+          <div key={i} className="s4-sp" style={{ 
+            left:`${s.l}%`,
+            top:`${s.t}%`,
+            width:s.w,
+            height:s.w,
+            animationDelay:`${s.d}s`,
+            animationDuration:`${s.dur}s` 
+          }} />
         ))}
+        
         <div className="s4-prog"><div className="s4-pf" /></div>
         {mounted && <button className="s4-music" onClick={toggleMute}>{muted?'🔇':'🔊'}</button>}
-
-        {/* ════ MOBILE (untouched) ════ */}
-        <div className="s4-sc">
-          <div className="s4-in s4-d1">
-            <p className="s4-ey">the next chapter</p>
-            <h2 className="s4-ttl">Her <em>Dreams</em></h2>
-            <p className="s4-sub">for her library, her forest, her future 🌿</p>
+        
+        <div className="s4-container">
+          {/* Hero Section */}
+          <div className="s4-hero s4-in s4-d1">
+            <span className="s4-eyebrow">the next chapter</span>
+            <h1 className="s4-title">Her <em>Dreams</em></h1>
+            <p className="s4-subtitle">For her library, her forest, her future — and every quiet joy in between 🌿</p>
           </div>
-          <div className="s4-rule s4-in s4-d2"><div className="s4-rl" /><span style={{fontSize:'.9rem',opacity:.4}}>✦</span><div className="s4-rl" /></div>
-          <div className="s4-in s4-d3">
+          
+          <div className="s4-divider s4-in s4-d2">
+            <div className="s4-divider-line" />
+            <span className="s4-divider-icon">✦</span>
+            <div className="s4-divider-line" />
+          </div>
+          
+          {/* Dream Cards */}
+          <div className="s4-grid s4-in s4-d3">
             {DREAM_CARDS.map((d,i) => (
-              <div key={i} className="s4-cd">
-                <div className="s4-ci">{d.icon}</div>
-                <div className="s4-cb">
-                  <div className="s4-ct">{d.title}</div>
-                  <div className="s4-cx">{d.line}</div>
-                </div>
+              <div key={i} className="s4-card">
+                <span className="s4-card-icon">{d.icon}</span>
+                <h3 className="s4-card-title">{d.title}</h3>
+                <p className="s4-card-text">{d.line}</p>
               </div>
             ))}
           </div>
-          <div className="s4-rule s4-in s4-d4"><div className="s4-rl" /><span style={{fontSize:'.9rem',opacity:.4}}>✦</span><div className="s4-rl" /></div>
-          <div className="s4-lt s4-in s4-d4">
-            <p className="s4-lx">
-              Every library has one book that changes everything.<br />
-              Every forest has one path nobody else takes.<br /><br />
-              You are both — the book and the path.
-              <span>May this year be the one where you finally see how extraordinary your own story is.</span>
-            </p>
+          
+          <div className="s4-divider s4-in s4-d4">
+            <div className="s4-divider-line" />
+            <span className="s4-divider-icon">🍃</span>
+            <div className="s4-divider-line" />
           </div>
-          <p className="s4-vs s4-in s4-d5">
-            Har kitaab jo tum padhogi —<br />
-            har ped ke neeche jo tum bethogi —<br />
-            <strong>woh pal sirf tumhare honge.</strong><br />
-            Protect them. Live them fully.
-          </p>
-          <div className="s4-bs s4-in s4-d6">
-            <button className="s4-bp" onClick={restart}>↩ read from the beginning</button>
-            <button className="s4-bg" onClick={() => setStep(3)}>← back to birthday wishes</button>
-          </div>
-          <div className="s4-ft s4-in s4-d6">
-            <p className="s4-fi">🌿 🍃 🌸 🍂 🌿</p>
-            <p className="s4-fx">written in the margins of a very good year</p>
-          </div>
-        </div>
-
-        {/* ════ DESKTOP layout ════ */}
-        <div className="s4-desk s4-in s4-d1">
-
-          {/* ── 1. Hero header ── */}
-          <div className="s4-hero">
-            <div className="s4-hero-left">
-              <span className="s4-hero-tag">the next chapter · her dreams</span>
-              <div className="s4-hero-title">
-                Her<br /><em>Dreams</em>
+          
+          {/* Two Column Layout */}
+          <div className="s4-two-col s4-in s4-d5">
+            <div className="s4-letter">
+              <div className="s4-letter-quote">
+                Every library has one book that changes everything.<br />
+                Every forest has one path nobody else takes.<br /><br />
+                You are both — the book and the path.
+                <span className="s4-letter-signature">
+                  May this year be the one where you finally see how extraordinary your own story is.
+                </span>
               </div>
             </div>
-            <div className="s4-hero-right">
-              <p className="s4-hero-sub">
-                for her library, her forest,<br />
-                her ice cream, her little joys,<br />
-                her world — and everyone in it.
-              </p>
-              <div className="s4-hero-rule" />
-            </div>
-          </div>
-
-          {/* ── 2. Staggered 3-col card grid ── */}
-          <div className="s4-grid">
-            {DREAM_CARDS.map((d,i) => (
-              <div key={i} className="s4-gcard">
-                <span className="s4-gcard-num">{String(i+1).padStart(2,'0')}</span>
-                <span className="s4-gcard-icon">{d.icon}</span>
-                <div className="s4-gcard-title">{d.title}</div>
-                <div className="s4-gcard-line">{d.line}</div>
-              </div>
-            ))}
-          </div>
-
-          {/* ── 3. Letter + Hindi verse ── */}
-          <div className="s4-letter-section">
-            <div className="s4-letter-left">
-              <span className="s4-letter-ornament">❧ ✦ ❧</span>
-              <div className="s4-letter-box">
-                <p className="s4-letter-text">
-                  Every library has one book that changes everything.<br />
-                  Every forest has one path nobody else takes.<br /><br />
-                  You are both — the book and the path.
-                  <span>May this year be the one where you finally see how extraordinary your own story is.</span>
-                </p>
-              </div>
-            </div>
-            <div className="s4-letter-right">
-              <p className="s4-verse-big">
+            
+            <div className="s4-verse">
+              <div className="s4-verse-text">
                 Har kitaab jo tum padhogi —<br />
                 har ped ke neeche jo tum bethogi —<br />
-                <strong>woh pal sirf tumhare honge.</strong><br />
+                <span className="s4-verse-highlight">woh pal sirf tumhare honge.</span>
                 Protect them. Live them fully.
-              </p>
+              </div>
             </div>
           </div>
-
-          {/* ── 4. Nav footer ── */}
-          <div className="s4-nav-section">
-            <div className="s4-nav-ornament">
-              written in the margins of a very good year 🌿
-            </div>
-            <div className="s4-nav-btns">
-              <button className="s4-nav-primary" onClick={restart}>↩ read from the beginning</button>
-              <button className="s4-nav-ghost" onClick={() => setStep(3)}>← back to birthday wishes</button>
-            </div>
-            <div className="s4-nav-right">a botanical journal<br />🌿 🍃 🌸 🍂 🌿</div>
+          
+          {/* Buttons */}
+          <div className="s4-buttons s4-in s4-d6">
+            <button className="s4-btn-primary" onClick={() => goToStep(5)}>
+              ✉️ Read the Final Letter →
+            </button>
+            <button className="s4-btn-secondary" onClick={() => goToStep(3)}>
+              ← back to birthday wishes
+            </button>
           </div>
-
+          
+          {/* Footer */}
+          <div className="s4-footer s4-in s4-d6">
+            <div className="s4-footer-icon">🌿 🍃 🌸 🍂 🌿</div>
+            <div className="s4-footer-text">written in the margins of a very good year</div>
+          </div>
         </div>
       </div>
     </>
   );
 
+  // ══════════════════════════════════════════════════════════════════════════
+  // STEP 5 — THE FINAL LETTER  (unique midnight-ink theme: deep blue/indigo)
+  // ══════════════════════════════════════════════════════════════════════════
+  if (step === 15) return (
+    <>
+      <style>{`
+        ${FONT}
+        *{box-sizing:border-box;margin:0;padding:0}
+
+        /* Deep midnight ink — distinct from amber dreams */
+        .s5-root{
+          min-height:100dvh;
+          background:#05080f;
+          font-family:'DM Sans',sans-serif;
+          color:#dde4f5;
+          position:relative;overflow-x:hidden;
+        }
+        .s5-root::before{
+          content:'';position:fixed;inset:0;z-index:0;pointer-events:none;
+          background:
+            radial-gradient(ellipse at 30% 0%,rgba(80,100,200,.20) 0%,transparent 55%),
+            radial-gradient(ellipse at 75% 85%,rgba(60,80,180,.14) 0%,transparent 50%),
+            radial-gradient(ellipse at 10% 70%,rgba(40,60,160,.10) 0%,transparent 50%)
+        }
+        .s5-root::after{
+          content:'';position:fixed;inset:0;z-index:0;pointer-events:none;
+          background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.88' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.04'/%3E%3C/svg%3E")
+        }
+
+        /* floating ink-drop specks */
+        .s5-sp{position:fixed;border-radius:50%;pointer-events:none;z-index:1;background:rgba(120,150,255,.45);animation:s5sk ease-in-out infinite}
+        @keyframes s5sk{0%,100%{transform:translateY(0) scale(1);opacity:.10}50%{transform:translateY(-14px) scale(1.2);opacity:.28}}
+
+        /* progress — full, silver-blue */
+        .s5-prog{position:fixed;top:0;left:0;right:0;height:2px;z-index:99;background:rgba(255,255,255,.04)}
+        .s5-pf{height:100%;width:100%;background:linear-gradient(90deg,#3a5abf,#8fa3f0,#3a5abf);background-size:200%;animation:s5sh 4s linear infinite}
+        @keyframes s5sh{0%{background-position:200% 0}100%{background-position:-200% 0}}
+
+        .s5-music{position:fixed;top:14px;right:14px;z-index:99;width:40px;height:40px;border-radius:50%;background:rgba(255,255,255,.05);border:1px solid rgba(100,130,240,.2);cursor:pointer;font-size:1rem;display:flex;align-items:center;justify-content:center;backdrop-filter:blur(12px);transition:transform .2s}
+        .s5-music:active{transform:scale(.88)}
+
+        /* ── MOBILE ── */
+        .s5-sc{position:relative;z-index:2;padding:60px 24px 80px;max-width:560px;margin:0 auto}
+        .s5-env{text-align:center;margin-bottom:28px;font-size:3rem;animation:s5bob 3s ease-in-out infinite}
+        @keyframes s5bob{0%,100%{transform:translateY(0) rotate(-3deg)}50%{transform:translateY(-8px) rotate(3deg)}}
+        .s5-ey{font-family:'DM Sans',sans-serif;font-weight:300;font-size:clamp(.68rem,2vw,.76rem);letter-spacing:.26em;text-transform:uppercase;color:rgba(120,150,255,.55);text-align:center;margin-bottom:6px}
+        .s5-ttl{font-family:'Cormorant Garamond',serif;font-weight:400;font-size:clamp(2.2rem,9vw,3.2rem);line-height:1.05;text-align:center;color:#dde4f5;margin-bottom:4px}
+        .s5-ttl em{font-style:italic;color:#8fa3f0}
+        .s5-cap{font-family:'Cormorant Garamond',serif;font-style:italic;font-size:clamp(.9rem,3vw,1rem);color:rgba(120,150,255,.5);text-align:center;margin-bottom:32px}
+        .s5-rule{display:flex;align-items:center;gap:14px;margin:24px 0}
+        .s5-rl{flex:1;height:1px;background:linear-gradient(90deg,transparent,rgba(120,150,255,.28),transparent)}
+
+        /* paper card — tinted blue-ink */
+        .s5-paper{
+          background:rgba(220,230,255,.03);
+          border:1px solid rgba(100,130,240,.18);
+          border-radius:2px;padding:32px 28px;
+          position:relative;margin-bottom:32px;
+        }
+        .s5-paper::before{content:'✦';position:absolute;top:-13px;left:50%;transform:translateX(-50%);background:#05080f;padding:0 12px;font-size:1rem;color:rgba(120,150,255,.5)}
+        .s5-seal{display:flex;align-items:center;justify-content:center;width:48px;height:48px;border-radius:50%;background:rgba(60,80,200,.22);border:2px solid rgba(100,130,240,.4);font-size:1.2rem;margin:0 auto 24px;animation:s5pulse 2.4s ease-in-out infinite}
+        @keyframes s5pulse{0%,100%{box-shadow:0 0 0 0 rgba(100,130,240,.3)}50%{box-shadow:0 0 0 8px rgba(100,130,240,0)}}
+        .s5-date{font-family:'Dancing Script',cursive;font-size:.9rem;color:rgba(120,150,255,.4);text-align:right;margin-bottom:20px;letter-spacing:.04em}
+        .s5-dear{font-family:'Dancing Script',cursive;font-size:clamp(1.5rem,6vw,2rem);color:#8fa3f0;margin-bottom:20px;line-height:1.2}
+        .s5-para{font-family:'Cormorant Garamond',serif;font-style:italic;font-size:clamp(1rem,3.8vw,1.12rem);color:rgba(221,228,245,.78);line-height:1.85;margin-bottom:20px}
+        .s5-para em{font-style:normal;font-weight:600;color:#8fa3f0}
+        .s5-highlight{margin:28px 0;padding:18px 20px;border-left:2px solid rgba(100,130,240,.4);background:rgba(100,130,240,.05)}
+        .s5-hl-text{font-family:'Cormorant Garamond',serif;font-style:italic;font-size:clamp(1.1rem,4vw,1.3rem);color:rgba(221,228,245,.9);line-height:1.7}
+        .s5-ps{margin-top:28px;padding-top:20px;border-top:1px solid rgba(100,130,240,.12);font-family:'DM Sans',sans-serif;font-weight:300;font-size:clamp(.84rem,3vw,.92rem);color:rgba(221,228,245,.4);line-height:1.7}
+        .s5-ps em{font-family:'Dancing Script',cursive;font-style:normal;font-size:1.1em;color:rgba(120,150,255,.55)}
+        .s5-sig{font-family:'Dancing Script',cursive;font-size:clamp(1.4rem,5vw,1.8rem);color:rgba(120,150,255,.7);text-align:right;margin-top:28px;line-height:1.3}
+        .s5-hearts{text-align:center;margin:24px 0;font-size:1rem;opacity:.3;letter-spacing:.25em}
+        .s5-btns{display:flex;flex-direction:column;gap:10px;margin-top:28px}
+        .s5-primary{width:100%;padding:16px 20px;border-radius:2px;border:1px solid rgba(100,130,240,.45);background:rgba(100,130,240,.1);color:#8fa3f0;font-family:'Cormorant Garamond',serif;font-style:italic;font-size:clamp(1rem,3.5vw,1.1rem);cursor:pointer;letter-spacing:.02em;transition:background .2s;display:flex;align-items:center;justify-content:center;gap:8px}
+        .s5-primary:active{background:rgba(100,130,240,.22)}
+        .s5-ghost{width:100%;padding:12px 20px;border-radius:2px;border:1px solid rgba(255,255,255,.08);background:transparent;color:rgba(221,228,245,.3);font-family:'DM Sans',sans-serif;font-weight:300;font-size:.88rem;cursor:pointer;letter-spacing:.04em}
+        .s5-ghost:active{color:rgba(221,228,245,.75)}
+        .s5-next-cta{width:100%;padding:16px 20px;border-radius:2px;border:1px solid rgba(180,140,220,.4);background:rgba(160,100,220,.1);color:rgba(200,160,240,.85);font-family:'Cormorant Garamond',serif;font-style:italic;font-size:clamp(1rem,3.5vw,1.1rem);cursor:pointer;letter-spacing:.02em;transition:background .2s;display:flex;align-items:center;justify-content:center;gap:8px}
+        .s5-next-cta:active{background:rgba(160,100,220,.22)}
+        .s5-ft{text-align:center;margin-top:40px;padding-top:24px;border-top:1px solid rgba(255,255,255,.05)}
+        .s5-fi{font-size:.85rem;opacity:.18;letter-spacing:.3em;margin-bottom:8px}
+        .s5-fx{font-family:'Cormorant Garamond',serif;font-style:italic;font-size:.8rem;color:rgba(120,150,255,.28)}
+
+        /* ── DESKTOP two-panel ── */
+        .s5-desk{display:none}
+        @media(min-width:960px){
+          .s5-sc{display:none}
+          .s5-desk{display:grid;grid-template-columns:1fr 1fr;min-height:100dvh;position:relative;z-index:2}
+          /* LEFT */
+          .s5-d-left{display:flex;flex-direction:column;justify-content:center;padding:80px 64px;border-right:1px solid rgba(100,130,240,.1);position:relative;overflow:hidden}
+          .s5-d-left::before{content:'';position:absolute;inset:0;background:radial-gradient(ellipse at 30% 40%,rgba(80,110,220,.09) 0%,transparent 65%)}
+          .s5-d-chapter{position:absolute;bottom:-60px;right:-30px;font-family:'Cormorant Garamond',serif;font-weight:400;font-size:18rem;line-height:1;color:rgba(100,130,240,.04);pointer-events:none;user-select:none}
+          .s5-d-tag{font-family:'DM Sans',sans-serif;font-weight:300;font-size:.62rem;letter-spacing:.3em;text-transform:uppercase;color:rgba(120,150,255,.4);margin-bottom:20px;position:relative;z-index:1}
+          .s5-d-title{font-family:'Cormorant Garamond',serif;font-weight:400;font-size:clamp(3rem,4.5vw,5rem);line-height:.92;color:#dde4f5;position:relative;z-index:1;margin-bottom:6px}
+          .s5-d-title em{font-style:italic;color:#8fa3f0;display:block}
+          .s5-d-divider{width:48px;height:1px;background:linear-gradient(90deg,rgba(120,150,255,.6),transparent);margin:28px 0;position:relative;z-index:1}
+          .s5-d-dots{display:flex;gap:18px;margin-bottom:36px;position:relative;z-index:1}
+          .s5-d-dot{display:flex;flex-direction:column;align-items:center;gap:5px}
+          .s5-d-dot-circle{width:7px;height:7px;border-radius:50%;background:rgba(100,130,240,.2);border:1px solid rgba(100,130,240,.35)}
+          .s5-d-dot-circle.done{background:rgba(100,130,240,.5);box-shadow:0 0 6px rgba(100,130,240,.35)}
+          .s5-d-dot-circle.active{background:#8fa3f0;box-shadow:0 0 10px rgba(143,163,240,.6)}
+          .s5-d-dot-label{font-family:'DM Sans',sans-serif;font-weight:300;font-size:.55rem;letter-spacing:.12em;text-transform:uppercase;color:rgba(120,150,255,.28)}
+          .s5-d-dot-label.done{color:rgba(120,150,255,.5)}
+          .s5-d-dot-label.active{color:rgba(143,163,240,.85)}
+          .s5-d-quote{font-family:'Cormorant Garamond',serif;font-style:italic;font-size:clamp(.95rem,1.2vw,1.05rem);line-height:1.8;color:rgba(221,228,245,.3);max-width:320px;position:relative;z-index:1}
+          /* RIGHT */
+          .s5-d-right{display:flex;flex-direction:column;justify-content:center;padding:64px;background:rgba(5,8,20,.5);overflow-y:auto}
+          .s5-d-paper{background:rgba(200,210,255,.03);border:1px solid rgba(100,130,240,.14);padding:40px 36px;position:relative;margin-bottom:24px}
+          .s5-d-paper::before{content:'✦';position:absolute;top:-12px;left:50%;transform:translateX(-50%);background:#050810;padding:0 12px;font-size:.9rem;color:rgba(120,150,255,.42)}
+          .s5-d-date{font-family:'Dancing Script',cursive;font-size:.88rem;color:rgba(120,150,255,.35);text-align:right;margin-bottom:18px}
+          .s5-d-dear{font-family:'Dancing Script',cursive;font-size:1.65rem;color:#8fa3f0;margin-bottom:18px;line-height:1.2}
+          .s5-d-para{font-family:'Cormorant Garamond',serif;font-style:italic;font-size:.96rem;color:rgba(221,228,245,.75);line-height:1.85;margin-bottom:16px}
+          .s5-d-para em{font-style:normal;font-weight:600;color:#8fa3f0}
+          .s5-d-highlight{margin:20px 0;padding:14px 18px;border-left:2px solid rgba(100,130,240,.4);background:rgba(100,130,240,.04)}
+          .s5-d-hl{font-family:'Cormorant Garamond',serif;font-style:italic;font-size:1.05rem;color:rgba(221,228,245,.88);line-height:1.65}
+          .s5-d-ps{margin-top:22px;padding-top:16px;border-top:1px solid rgba(100,130,240,.1);font-family:'DM Sans',sans-serif;font-weight:300;font-size:.82rem;color:rgba(221,228,245,.35);line-height:1.65}
+          .s5-d-ps em{font-family:'Dancing Script',cursive;font-style:normal;font-size:1.05em;color:rgba(120,150,255,.5)}
+          .s5-d-sig{font-family:'Dancing Script',cursive;font-size:1.5rem;color:rgba(120,150,255,.65);text-align:right;margin-top:22px}
+          .s5-d-nav{display:flex;gap:10px;margin-top:20px;flex-wrap:wrap}
+          .s5-d-primary{flex:1;padding:13px 16px;border-radius:2px;border:1px solid rgba(100,130,240,.45);background:rgba(100,130,240,.1);color:#8fa3f0;font-family:'Cormorant Garamond',serif;font-style:italic;font-size:.94rem;cursor:pointer;transition:background .2s;display:flex;align-items:center;justify-content:center;gap:6px}
+          .s5-d-primary:active{background:rgba(100,130,240,.22)}
+          .s5-d-next{padding:13px 16px;border-radius:2px;border:1px solid rgba(180,140,220,.38);background:rgba(160,100,220,.09);color:rgba(200,160,240,.8);font-family:'Cormorant Garamond',serif;font-style:italic;font-size:.94rem;cursor:pointer;transition:background .2s;white-space:nowrap}
+          .s5-d-next:active{background:rgba(160,100,220,.2)}
+          .s5-d-ghost{padding:13px 18px;border-radius:2px;border:1px solid rgba(255,255,255,.07);background:transparent;color:rgba(221,228,245,.28);font-family:'DM Sans',sans-serif;font-weight:300;font-size:.82rem;cursor:pointer;letter-spacing:.04em;transition:color .2s;white-space:nowrap}
+          .s5-d-ghost:active{color:rgba(221,228,245,.7)}
+        }
+
+        @keyframes s5up{from{opacity:0;transform:translateY(18px)}to{opacity:1;transform:translateY(0)}}
+        .s5-in{animation:s5up .6s ease both}
+        .s5-d1{animation-delay:.04s}.s5-d2{animation-delay:.10s}.s5-d3{animation-delay:.17s}
+        .s5-d4{animation-delay:.24s}.s5-d5{animation-delay:.31s}.s5-d6{animation-delay:.38s}
+      `}</style>
+
+      <audio ref={audioRef} loop />
+      <Confetti />
+
+      <div className="s5-root">
+        {[{l:12,t:20,sz:3,d:0,dur:5},{l:35,t:65,sz:4,d:1.3,dur:6},{l:60,t:30,sz:3,d:.7,dur:4.5},{l:80,t:78,sz:5,d:2,dur:5.8},{l:90,t:15,sz:3,d:.4,dur:4.8},{l:22,t:88,sz:4,d:1.9,dur:6.2}].map((s,i) => (
+          <div key={i} className="s5-sp" style={{ left:`${s.l}%`,top:`${s.t}%`,width:s.sz,height:s.sz,animationDelay:`${s.d}s`,animationDuration:`${s.dur}s` }} />
+        ))}
+        <div className="s5-prog"><div className="s5-pf" /></div>
+        {mounted && <button className="s5-music" onClick={toggleMute}>{muted?'🔇':'🔊'}</button>}
+
+        {/* ════ MOBILE ════ */}
+        <div className="s5-sc">
+          <div className="s5-env s5-in s5-d1">✉️</div>
+          <div className="s5-in s5-d1">
+            <p className="s5-ey">the last page</p>
+            <h2 className="s5-ttl">A <em>Letter</em></h2>
+            <p className="s5-cap">pressed between the final leaves, just for you 🍂</p>
+          </div>
+          <div className="s5-rule s5-in s5-d2">
+            <div className="s5-rl" /><span style={{fontSize:'.8rem',opacity:.3}}>✦</span><div className="s5-rl" />
+          </div>
+          <div className="s5-paper s5-in s5-d3">
+            <div className="s5-seal">🌙</div>
+            <div className="s5-date">this birthday, this year 🌸</div>
+            <div className="s5-dear">Dearest {CONFIG.name},</div>
+            <p className="s5-para">
+              I wrote this at the very end — because some things are only true once you&apos;ve said everything else first.
+              When all the wishes are written and all the dreams named, what&apos;s left is the part that actually matters:
+              <em>you are someone worth celebrating.</em>
+            </p>
+            <div className="s5-highlight">
+              <p className="s5-hl-text">
+                Not because of what you&apos;ve done or where you&apos;re going —
+                but because of exactly, precisely who you are today,
+                on this page, in this moment.
+              </p>
+            </div>
+            <p className="s5-para">
+              You have this way of making ordinary things feel like stories worth keeping.
+              A walk. A conversation. A plate of food. A song nobody else notices.
+              You collect the world quietly, and you make it brighter without trying.
+            </p>
+            <p className="s5-para">
+              On this birthday, I hope you feel every bit of warmth that you&apos;ve quietly given to others —
+              returned to you, multiplied, wrapped in soft light and something that smells like old paper and rain.
+              <em>That&apos;s what you deserve.</em>
+            </p>
+            <p className="s5-para">
+              So here is my only real birthday wish for you:<br />
+              May every year from now on be a chapter that opens with your name at the top of the page —
+              and fills itself with every good thing you&apos;ve ever been too shy to ask for.
+            </p>
+            <div className="s5-hearts">🌙 ✨ 🌸 ✨ 🌙</div>
+            <div className="s5-sig">
+              with everything, always ❤️<br />
+              <span style={{fontSize:'1.1rem',opacity:.65}}>— someone who&apos;s rooting for you</span>
+            </div>
+            <div className="s5-ps">
+              <em>P.S.</em> — If you ever doubt how remarkable you are, come back and read this.
+              It will still be true. It&apos;s always been true.
+            </div>
+          </div>
+          <div className="s5-in s5-d5">
+            <div className="s5-btns">
+              <button className="s5-next-cta" onClick={() => goToStep(6)}>💌 One Last Thing →</button>
+              <button className="s5-primary" onClick={restart}>↩ Read from the very beginning</button>
+              <button className="s5-ghost" onClick={() => goToStep(4)}>← back to her dreams</button>
+            </div>
+          </div>
+          <div className="s5-ft s5-in s5-d6">
+            <p className="s5-fi">🌙 ✨ 🌸 ✨ 🌙</p>
+            <p className="s5-fx">the end of a very good chapter</p>
+          </div>
+        </div>
+
+        {/* ════ DESKTOP ════ */}
+        <div className="s5-desk s5-in s5-d1">
+          <div className="s5-d-left">
+            <div className="s5-d-chapter">V</div>
+            <p className="s5-d-tag">chapter five · the final letter</p>
+            <h2 className="s5-d-title">A<br /><em>Letter</em></h2>
+            <div className="s5-d-divider" />
+            <div className="s5-d-dots">
+              {[{label:'Open',state:'done'},{label:'Memories',state:'done'},{label:'Countdown',state:'done'},{label:'Wishes',state:'done'},{label:'Dreams',state:'done'},{label:'Letter',state:'active'},{label:'Always',state:''}].map((d,i) => (
+                <div key={i} className="s5-d-dot">
+                  <div className={`s5-d-dot-circle ${d.state}`} />
+                  <span className={`s5-d-dot-label ${d.state}`}>{d.label}</span>
+                </div>
+              ))}
+            </div>
+            <p className="s5-d-quote">
+              "Some words are only ready<br />
+              once everything else has been said.<br />
+              This is one of them."
+            </p>
+          </div>
+          <div className="s5-d-right">
+            <div className="s5-d-paper">
+              <div className="s5-d-date">this birthday, this year 🌸</div>
+              <div className="s5-d-dear">Dearest {CONFIG.name},</div>
+              <p className="s5-d-para">
+                I wrote this at the very end — because some things are only true once you&apos;ve said everything else first.
+                When all the wishes are written and all the dreams named, what&apos;s left is the part that actually matters:
+                <em>you are someone worth celebrating.</em>
+              </p>
+              <div className="s5-d-highlight">
+                <p className="s5-d-hl">
+                  Not because of what you&apos;ve done or where you&apos;re going —
+                  but because of exactly who you are today, on this page, in this moment.
+                </p>
+              </div>
+              <p className="s5-d-para">
+                You have this way of making ordinary things feel like stories worth keeping.
+                A walk. A conversation. A song nobody else notices.
+                You collect the world quietly, and you make it brighter without trying.
+              </p>
+              <p className="s5-d-para">
+                On this birthday, I hope you feel every bit of warmth that you&apos;ve quietly given to others —
+                returned to you, multiplied, wrapped in soft light and something that smells like old paper and rain.
+                <em>That&apos;s what you deserve.</em>
+              </p>
+              <p className="s5-d-para">
+                May every year from now on be a chapter that opens with your name at the top of the page —
+                and fills itself with every good thing you&apos;ve ever been too shy to ask for.
+              </p>
+              <div className="s5-d-sig">
+                with everything, always ❤️<br />
+                <span style={{fontSize:'1rem',opacity:.6}}>— someone who&apos;s rooting for you</span>
+              </div>
+              <div className="s5-d-ps">
+                <em>P.S.</em> — If you ever doubt how remarkable you are, come back and read this.
+                It will still be true. It&apos;s always been true.
+              </div>
+            </div>
+            <div className="s5-d-nav">
+              <button className="s5-d-next" onClick={() => goToStep(6)}>💌 One Last Thing →</button>
+              <button className="s5-d-primary" onClick={restart}>↩ From the beginning</button>
+              <button className="s5-d-ghost" onClick={() => goToStep(4)}>← her dreams</button>
+            </div>
+            <div style={{marginTop:16,textAlign:'center',fontFamily:"'DM Sans',sans-serif",fontWeight:300,fontSize:'.62rem',letterSpacing:'.2em',textTransform:'uppercase',color:'rgba(120,150,255,.18)'}}>
+              🌙 the end of a very good chapter 🌙
+            </div>
+          </div>
+        </div>
+      </div>
+    </>
+  );
+
+  // ══════════════════════════════════════════════════════════════════════════
+  // STEP 6 — THE PROPOSAL  (very light, very gentle — just one chance)
+  // ══════════════════════════════════════════════════════════════════════════
+  if (step === 5) return (
+    <>
+      <style>{`
+        ${FONT}
+        *{box-sizing:border-box;margin:0;padding:0}
+
+        /* soft rose-petal theme — the softest of all pages */
+        .s6-root{
+          min-height:100dvh;
+          background:#0d0809;
+          display:flex;align-items:center;justify-content:center;
+          padding:40px 18px;
+          position:relative;overflow:hidden;
+          font-family:'DM Sans',sans-serif;
+        }
+        .s6-root::before{
+          content:'';position:fixed;inset:0;z-index:0;pointer-events:none;
+          background:
+            radial-gradient(ellipse at 50% 20%,rgba(200,80,100,.14) 0%,transparent 60%),
+            radial-gradient(ellipse at 20% 80%,rgba(180,60,80,.10) 0%,transparent 55%),
+            radial-gradient(ellipse at 80% 70%,rgba(160,50,70,.08) 0%,transparent 55%)
+        }
+        .s6-root::after{
+          content:'';position:fixed;inset:0;z-index:0;pointer-events:none;
+          background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.88' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.038'/%3E%3C/svg%3E")
+        }
+
+        /* drifting rose-petal petals */
+        .s6-petal{position:fixed;pointer-events:none;z-index:1;font-size:1rem;opacity:0;animation:s6fall linear infinite}
+        @keyframes s6fall{0%{opacity:0;transform:translateY(-10px) rotate(0deg)}10%{opacity:.18}85%{opacity:.12}100%{transform:translateY(100dvh) rotate(360deg);opacity:0}}
+
+        .s6-prog{position:fixed;top:0;left:0;right:0;height:2px;z-index:99;background:rgba(255,255,255,.04)}
+        .s6-pf{height:100%;width:100%;background:linear-gradient(90deg,#8a3a4a,#c47a8a,#8a3a4a);background-size:200%;animation:s6sh 5s linear infinite}
+        @keyframes s6sh{0%{background-position:200% 0}100%{background-position:-200% 0}}
+
+        .s6-music{position:fixed;top:14px;right:14px;z-index:99;width:40px;height:40px;border-radius:50%;background:rgba(255,255,255,.05);border:1px solid rgba(200,100,120,.2);cursor:pointer;font-size:1rem;display:flex;align-items:center;justify-content:center;backdrop-filter:blur(12px);transition:transform .2s}
+        .s6-music:active{transform:scale(.88)}
+
+        /* the card */
+        .s6-card{
+          position:relative;z-index:2;
+          width:100%;max-width:420px;
+          background:rgba(255,240,245,.03);
+          border:1px solid rgba(200,100,120,.15);
+          border-radius:3px;
+          padding:48px 30px 44px;
+          text-align:center;
+          backdrop-filter:blur(16px);
+          box-shadow:0 8px 60px rgba(0,0,0,.55),inset 0 1px 0 rgba(255,255,255,.05);
+        }
+
+        /* corner accents */
+        .s6-cn{position:absolute;font-size:1.1rem;opacity:.15;pointer-events:none}
+        .s6-cn.tl{top:12px;left:14px;transform:rotate(-20deg)}.s6-cn.tr{top:12px;right:14px;transform:rotate(20deg)}
+        .s6-cn.bl{bottom:12px;left:14px;transform:rotate(15deg)}.s6-cn.br{bottom:12px;right:14px;transform:rotate(-15deg)}
+
+        /* heart icon */
+        .s6-heart{font-size:2.6rem;display:block;margin-bottom:20px;animation:s6hb 2.8s ease-in-out infinite}
+        @keyframes s6hb{0%,100%{transform:scale(1)}50%{transform:scale(1.12)}}
+
+        .s6-ey{font-family:'DM Sans',sans-serif;font-weight:300;font-size:.72rem;letter-spacing:.28em;text-transform:uppercase;color:rgba(200,120,140,.5);margin-bottom:10px}
+
+        .s6-ttl{font-family:'Cormorant Garamond',serif;font-weight:400;font-size:clamp(1.9rem,8vw,2.6rem);line-height:1.1;color:#f5e0e5;margin-bottom:8px}
+        .s6-ttl em{font-style:italic;color:#d4899a}
+
+        .s6-rule{display:flex;align-items:center;gap:14px;margin:18px 0}
+        .s6-rl{flex:1;height:1px;background:linear-gradient(90deg,transparent,rgba(200,120,140,.22),transparent)}
+
+        /* the gentle ask — written like a whisper */
+        .s6-ask{
+          font-family:'Cormorant Garamond',serif;font-style:italic;
+          font-size:clamp(1rem,4vw,1.18rem);
+          color:rgba(245,224,229,.7);
+          line-height:1.85;
+          margin-bottom:10px;
+          padding:0 4px;
+        }
+        .s6-ask em{font-style:normal;color:rgba(212,137,154,.85)}
+
+        /* the sub note — even softer */
+        .s6-note{
+          font-family:'DM Sans',sans-serif;font-weight:300;
+          font-size:.82rem;
+          color:rgba(245,224,229,.32);
+          line-height:1.65;
+          margin-bottom:30px;
+          font-style:italic;
+        }
+
+        /* single soft CTA */
+        .s6-cta{
+          width:100%;padding:16px 20px;border-radius:3px;
+          border:1px solid rgba(200,120,140,.35);
+          background:rgba(200,100,120,.08);
+          color:rgba(212,160,170,.85);
+          font-family:'Dancing Script',cursive;
+          font-size:clamp(1.1rem,4.5vw,1.35rem);
+          cursor:pointer;
+          letter-spacing:.02em;
+          transition:background .25s,border-color .25s;
+          margin-bottom:10px;
+        }
+        .s6-cta:active{background:rgba(200,100,120,.18)}
+
+        .s6-skip{
+          width:100%;padding:10px;border:none;background:transparent;
+          color:rgba(245,224,229,.2);
+          font-family:'DM Sans',sans-serif;font-weight:300;
+          font-size:.75rem;letter-spacing:.06em;cursor:pointer;
+          transition:color .2s;
+        }
+        .s6-skip:active{color:rgba(245,224,229,.55)}
+
+        /* signature line */
+        .s6-sig{
+          margin-top:28px;
+          font-family:'Dancing Script',cursive;
+          font-size:.92rem;
+          color:rgba(200,120,140,.35);
+          letter-spacing:.04em;
+        }
+
+        @keyframes s6up{from{opacity:0;transform:translateY(20px)}to{opacity:1;transform:translateY(0)}}
+        .s6-in{animation:s6up .7s ease both}
+        .s6-d1{animation-delay:.05s}.s6-d2{animation-delay:.14s}.s6-d3{animation-delay:.23s}.s6-d4{animation-delay:.32s}.s6-d5{animation-delay:.42s}
+
+        /* desktop: keep card centred, bit wider */
+        @media(min-width:720px){
+          .s6-card{max-width:480px;padding:56px 48px 52px}
+        }
+      `}</style>
+      <audio ref={audioRef} loop />
+
+      <div className="s6-root">
+        {/* falling petals */}
+        {[{l:8,d:0,dur:8},{l:22,d:2.1,dur:9.5},{l:40,d:1.1,dur:7.8},{l:60,d:3.2,dur:10},{l:75,d:0.5,dur:8.5},{l:88,d:1.8,dur:9},{l:50,d:4,dur:11}].map((p,i) => (
+          <div key={i} className="s6-petal" style={{ left:`${p.l}%`, animationDelay:`${p.d}s`, animationDuration:`${p.dur}s` }}>🌸</div>
+        ))}
+
+        <div className="s6-prog"><div className="s6-pf" /></div>
+        {mounted && <button className="s6-music" onClick={toggleMute}>{muted?'🔇':'🔊'}</button>}
+
+        <div className="s6-card">
+          <span className="s6-cn tl">🌸</span><span className="s6-cn tr">🌸</span>
+          <span className="s6-cn bl">🌹</span><span className="s6-cn br">🌹</span>
+
+          <span className="s6-heart s6-in s6-d1">🌸</span>
+
+          <div className="s6-in s6-d2">
+            <p className="s6-ey">one last thing</p>
+            <h2 className="s6-ttl">Just <em>One</em><br />Chance</h2>
+          </div>
+
+          <div className="s6-rule s6-in s6-d2">
+            <div className="s6-rl" /><span style={{fontSize:'.75rem',opacity:.3}}>✦</span><div className="s6-rl" />
+          </div>
+
+          <div className="s6-in s6-d3">
+            <p className="s6-ask">
+              I&apos;ve said everything I wanted to say —<br />
+              the wishes, the dreams, the letter.<br /><br />
+              But there&apos;s something I haven&apos;t said yet.<br />
+              Something quieter.<br /><br />
+              <em>{CONFIG.name},</em><br />
+              would you give me just one chance?<br />
+              Not a promise. Not pressure.<br />
+              Just… one chance to show you something real.
+            </p>
+          </div>
+
+          <div className="s6-in s6-d4">
+            <p className="s6-note">
+              (no hurry. no expectation. just an honest ask,<br />
+              on your birthday, from someone who means it.)
+            </p>
+          </div>
+
+          <div className="s6-in s6-d5">
+            <button className="s6-cta" onClick={restart}>
+              🌸 maybe… let&apos;s see where it goes
+            </button>
+            <button className="s6-skip" onClick={restart}>
+              ← go back to the beginning
+            </button>
+          </div>
+
+          <p className="s6-sig s6-in s6-d5">— with hope, not pressure ❤️</p>
+        </div>
+      </div>
+    </>
+  );
+
+
+  
+
   return null;
-} 
-
-
- 
-
-// git add .
-// git commit -m "first commit"
-// git branch -M main
-// git push -u origin main W  
-
-
-
-// for referesh -Remove-Item -Recurse -Force .next
-
-
-// if error then 
-
-// git push -u origin main
+}
