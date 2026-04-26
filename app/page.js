@@ -1873,7 +1873,7 @@ export default function BirthdaySurprise() {
         {[{l:8,d:0,dur:8},{l:22,d:2.1,dur:9.5},{l:40,d:1.1,dur:7.8},{l:60,d:3.2,dur:10},{l:75,d:0.5,dur:8.5},{l:88,d:1.8,dur:9},{l:50,d:4,dur:11}].map((p,i) => (
           <div key={i} className="s6-petal" style={{ left:`${p.l}%`, animationDelay:`${p.d}s`, animationDuration:`${p.dur}s` }}>🌸</div>
         ))}
-
+ 
         <div className="s6-prog"><div className="s6-pf" /></div>
         {mounted && <button className="s6-music" onClick={toggleMute}>{muted?'🔇':'🔊'}</button>}
 
@@ -1935,11 +1935,8 @@ something we both grow into?
   return null;
 }
 
-<<<<<<< HEAD
 
 
-=======
->>>>>>> 7ab46bfc939d8aea41256265ca17e5cd715a01b4
 // git add .
 // git commit -m "first commit"
 // git branch -M main
@@ -1952,8 +1949,4 @@ something we both grow into?
 
 // if error then  
 
-<<<<<<< HEAD
 // git push -u origin main
-=======
-// git push -u origin main
->>>>>>> 7ab46bfc939d8aea41256265ca17e5cd715a01b4
