@@ -12,8 +12,8 @@ const CONFIG = {
   song1:      'happy-birthday-254480.mp3',
   song2:      'clock-ticking-60-second-countdown-118231.mp3',
   songCD:     'clock-ticking-60-second-countdown-118231.mp3',
-  song3:      'WhatsApp Audio 2025-10-24 at 21.29.27_789c5f74.mp3',
-  song4:      'WhatsApp Audio 2025-10-24 at 21.29.27_789c5f74.mp3',
+  song3:      'Ishq Di Baajiyaan - Lyrical Video Soorma Diljit Dosanjh Taapsee Pannu Shankar Ehsaan Loy - Sony Music India (128k).mp3',
+  song4:      'Ishq Di Baajiyaan - Lyrical Video Soorma Diljit Dosanjh Taapsee Pannu Shankar Ehsaan Loy - Sony Music India (128k).mp3',
   song5:      'WhatsApp Audio 2025-10-24 at 21.29.27_789c5f74.mp3',
   song6:      'WhatsApp Audio 2025-10-24 at 21.29.27_789c5f74.mp3', // proposal page
 };
@@ -669,7 +669,7 @@ export default function BirthdaySurprise() {
   // ══════════════════════════════════════════════════════════════════════════
   if (step === 3) {
     const wishes = [
-      { icon:'📖', line:"You are someone's favourite chapter." },
+      { icon:'📖', line:"May this year bring you good opportunities and meaningful experiences." },
       { icon:'🌿', line:'Rare. Like a forest path nobody else finds.' },
       { icon:'🍃', line:'Storms only visit forests worth staying for.' },
       { icon:'🌸', line:'Every dream in the margins — this year, let them bloom.' },
@@ -1735,7 +1735,7 @@ export default function BirthdaySurprise() {
   // ══════════════════════════════════════════════════════════════════════════
   // STEP 6 — THE PROPOSAL  (very light, very gentle — just one chance)
   // ══════════════════════════════════════════════════════════════════════════
-  if (step === 5) return (
+ if (step === 5) return (
     <>
       <style>{`
         ${FONT}
@@ -1807,31 +1807,51 @@ export default function BirthdaySurprise() {
         .s6-ask{
           font-family:'Cormorant Garamond',serif;font-style:italic;
           font-size:clamp(1rem,4vw,1.18rem);
-          color:rgba(245,224,229,.7);
-          line-height:1.85;
-          margin-bottom:10px;
+          color:rgba(245,224,229,.85);
+          line-height:1.65;
+          margin-bottom:20px;
           padding:0 4px;
         }
-        .s6-ask em{font-style:normal;color:rgba(212,137,154,.85)}
+        .s6-ask em{font-style:normal;color:rgba(212,137,154,.85);font-weight:500}
 
         /* the sub note — even softer */
         .s6-note{
           font-family:'DM Sans',sans-serif;font-weight:300;
           font-size:.82rem;
-          color:rgba(245,224,229,.32);
+          color:rgba(245,224,229,.42);
           line-height:1.65;
           margin-bottom:30px;
-          font-style:italic;
+        }
+        
+        /* wishlist styling */
+        .s6-wishes {
+          text-align: left;
+          margin: 24px 0 20px;
+          padding-left: 8px;
+        }
+        .s6-wish-item {
+          font-family:'DM Sans',sans-serif;
+          font-size:.92rem;
+          color:rgba(245,224,229,.7);
+          margin:12px 0;
+          display:flex;
+          align-items:center;
+          gap:10px;
+          line-height:1.4;
+        }
+        .s6-wish-marker {
+          font-size:1.1rem;
+          opacity:0.7;
         }
 
         /* single soft CTA */
         .s6-cta{
           width:100%;padding:16px 20px;border-radius:3px;
-          border:1px solid rgba(200,120,140,.35);
+          border:1px solid rgba(200,120,140,.45);
           background:rgba(200,100,120,.08);
-          color:rgba(212,160,170,.85);
+          color:rgba(212,160,170,.9);
           font-family:'Dancing Script',cursive;
-          font-size:clamp(1.1rem,4.5vw,1.35rem);
+          font-size:clamp(1rem,4vw,1.2rem);
           cursor:pointer;
           letter-spacing:.02em;
           transition:background .25s,border-color .25s;
@@ -1853,7 +1873,7 @@ export default function BirthdaySurprise() {
           margin-top:28px;
           font-family:'Dancing Script',cursive;
           font-size:.92rem;
-          color:rgba(200,120,140,.35);
+          color:rgba(200,120,140,.45);
           letter-spacing:.04em;
         }
 
@@ -1863,7 +1883,7 @@ export default function BirthdaySurprise() {
 
         /* desktop: keep card centred, bit wider */
         @media(min-width:720px){
-          .s6-card{max-width:480px;padding:56px 48px 52px}
+          .s6-card{max-width:500px;padding:56px 48px 52px}
         }
       `}</style>
       <audio ref={audioRef} loop />
@@ -1885,7 +1905,7 @@ export default function BirthdaySurprise() {
 
           <div className="s6-in s6-d2">
             <p className="s6-ey">one last thing</p>
-            <h2 className="s6-ttl">Just <em>One</em><br />Chance</h2>
+            <h2 className="s6-ttl">A small note<br /><em>to end this ✦</em></h2>
           </div>
 
           <div className="s6-rule s6-in s6-d2">
@@ -1894,36 +1914,44 @@ export default function BirthdaySurprise() {
 
           <div className="s6-in s6-d3">
             <p className="s6-ask">
-              I&apos;ve said everything I wanted to say —<br />
-              the wishes, the dreams, the letter.<br /><br />
-              But there&apos;s something I haven&apos;t said yet.<br />
-              Something quieter.<br /><br />
               <em>{CONFIG.name},</em><br />
-              would you give me just one chance?<br />
-              Not a promise. Not pressure.<br />
-              Just… one chance to show you something real.
+              Birthdays aren't just marks on a calendar —<br />
+              they're gentle reminders of how far you've come<br />
+              and how much beauty still lies ahead.
             </p>
+            <p className="s6-ask" style={{marginTop:'14px'}}>
+              You've walked your path in your own quiet way,<br />
+              and that's something truly worth celebrating.
+            </p>
+          </div>
+
+          <div className="s6-wishes s6-in s6-d4">
+            <div className="s6-wish-item"><span className="s6-wish-marker">—</span> try new things without overthinking</div>
+            <div className="s6-wish-item"><span className="s6-wish-marker">—</span> make decisions that feel right to you</div>
+            <div className="s6-wish-item"><span className="s6-wish-marker">—</span> recognize your own progress more often</div>
           </div>
 
           <div className="s6-in s6-d4">
             <p className="s6-note">
-              (no hurry. no expectation. just an honest ask,<br />
-              on your birthday, from someone who means it.)
+              Not everything needs to be perfect — consistency and forward motion matter more.<br />
+              Step by step. No rush. And don't forget to taste the present moment, instead of always chasing what's next.
             </p>
           </div>
 
           <div className="s6-in s6-d5">
+            <p className="s6-ask" style={{marginBottom:'16px', fontSize:'1.45rem'}}>
+              As a friend, I'm grateful to know you.<br />
+              Wishing you whatever feels right for the road ahead.
+            </p>
             <button className="s6-cta" onClick={restart}>
-              🌸 
-              can we turn this into something real Relation,
-something we both grow into?
+              🌸Wishing You a Year That Brings The Right People And Meaningful Connections Into Your Life.
             </button>
             <button className="s6-skip" onClick={restart}>
               ← go back to the beginning
             </button>
           </div>
 
-          <p className="s6-sig s6-in s6-d5">— with hope, not pressure ❤️</p>
+          <p className="s6-sig s6-in s6-d5">— with warmth, your friend 🎂</p>
         </div>
       </div>
     </>
