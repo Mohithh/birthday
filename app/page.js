@@ -29,9 +29,11 @@ const PHOTOS = [
 const DREAM_CARDS = [
   { icon:'📚', title:'Her Library',    line:"A room of her own. Floor-to-ceiling shelves. Rain on the window. That's the dream — and she'll get there." },
   { icon:'🌿', title:'Her Forest',     line:'Barefoot on grass. Wind in trees. A girl who knows that the best therapy has no appointment.' },
-  { icon:'🍦', title:'Her Ice Cream',  line:'May she always find the best flavour. May nobody ever judge how many scoops. This is non-negotiable.' },
+  { icon:'🍫', title:'Her Chocolate',  line:'Bad day? Chocolate. Good day? Chocolate. No reason at all? Still chocolate. Some rules are not meant to be broken.' },
+    { icon:'🍦', title:'Her Ice Cream',  line:'May she always find the best flavour. May nobody ever judge how many scoops. This is non-negotiable.' },
   { icon:'🧸', title:'Her Little Joys',line:'Toys. Soft things. The silly stuff. May she never outgrow the things that make her eyes light up.' },
   { icon:'🌍', title:'Her World',      line:"May she go everywhere she's pinned on a map, dreamed about and planned with excitement" },
+    { icon:'🕊️', title:'Her Silence',   line:"Not empty — just peaceful. The kind of quiet where everything starts to make sense." },
   { icon:'🌸', title:'Her People',     line:'May every person in her life be someone who stays — not just in good chapters, but in the hard ones too.' },
 ];
 
