@@ -847,9 +847,9 @@ export default function BirthdaySurprise() {
                 <p className="s3-c1-pull">
                   "Unplanned, like a wildflower<br />
                   pressed inside a library book —<br />
-                  right time, right person."
+                simple, real, and hard to miss."
                 </p>
-                <p className="s3-c1-credit">— that&apos;s always been you ❤️</p>
+                <p className="s3-c1-credit">— that&apos;s and that’s just who you are</p>
               </div>
               <div className="s3-col-div" />
               <div className="s3-col2">
