@@ -31,7 +31,7 @@ const DREAM_CARDS = [
   { icon:'🌿', title:'Her Forest',     line:'Barefoot on grass. Wind in trees. A girl who knows that the best therapy has no appointment.' },
   { icon:'🍦', title:'Her Ice Cream',  line:'May she always find the best flavour. May nobody ever judge how many scoops. This is non-negotiable.' },
   { icon:'🧸', title:'Her Little Joys',line:'Toys. Soft things. The silly stuff. May she never outgrow the things that make her eyes light up.' },
-  { icon:'🌍', title:'Her World',      line:"May she go everywhere she's pinned on a map, talked about at 2am, and quietly dreamed of alone." },
+  { icon:'🌍', title:'Her World',      line:"May she go everywhere she's pinned on a map, dreamed about and planned with excitement" },
   { icon:'🌸', title:'Her People',     line:'May every person in her life be someone who stays — not just in good chapters, but in the hard ones too.' },
 ];
 
@@ -786,8 +786,8 @@ export default function BirthdaySurprise() {
               <p className="s3-bl">a new chapter begins 🎂</p>
             </div>
             <div className="s3-in s3-d3">
-              <p className="s3-qt">"Unplanned, like a wildflower<br />pressed inside a library book —<br />right time, right person."</p>
-              <p className="s3-qc">— that&apos;s always been you ❤️</p>
+              <p className="s3-qt">"Unplanned, like a wildflower<br />Some people don’t enter the story—<br /> — they quietly rewrite it"</p>
+              <p className="s3-qc">— Always spreading smiles and good vibes.</p>
             </div>
             <div className="s3-rule s3-in s3-d3"><div className="s3-rl" /><span className="s3-ri">🌿</span><div className="s3-rl" /></div>
             <div className="s3-in s3-d4">
@@ -1415,7 +1415,7 @@ export default function BirthdaySurprise() {
               <div className="s4-letter-quote">
                 Every library has one book that changes everything.<br />
                 Every forest has one path nobody else takes.<br /><br />
-                You are both — the book and the path.
+                You have your own unique story and path.
                 <span className="s4-letter-signature">
                   May this year be the one where you finally see how extraordinary your own story is.
                 </span>
@@ -1427,7 +1427,7 @@ export default function BirthdaySurprise() {
                 Har kitaab jo tum padhogi —<br />
                 har ped ke neeche jo tum bethogi —<br />
                 <span className="s4-verse-highlight">woh pal sirf tumhare honge.</span>
-                Protect them. Live them fully.
+                Enjoy Every Moment And Make The Most Of It.
               </div>
             </div>
           </div>
@@ -1918,7 +1918,7 @@ export default function BirthdaySurprise() {
               <em>{CONFIG.name},</em><br />
               Birthdays aren't just marks on a calendar —<br />
               they're gentle reminders of how far you've come<br />
-              and how much beauty still lies ahead.
+              and how much more lies ahead.
             </p>
             <p className="s6-ask" style={{marginTop:'14px'}}>
               You've walked your path in your own quiet way,<br />
@@ -1929,7 +1929,7 @@ export default function BirthdaySurprise() {
           <div className="s6-wishes s6-in s6-d4">
             <div className="s6-wish-item"><span className="s6-wish-marker">—</span> try new things without overthinking</div>
             <div className="s6-wish-item"><span className="s6-wish-marker">—</span> make decisions that feel right to you</div>
-            <div className="s6-wish-item"><span className="s6-wish-marker">—</span> recognize your own progress more often</div>
+            <div className="s6-wish-item"><span className="s6-wish-marker">—</span>take a moment to recognize your own progress</div>
           </div>
 
           <div className="s6-in s6-d4">
