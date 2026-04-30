@@ -27,7 +27,7 @@ const PHOTOS = [
 ];
 
 const DREAM_CARDS = [
-  { icon:'📚', title:'Her Library',    line:"A room of her own. Floor-to-ceiling shelves. Rain on the window. That's the dream — and she'll get there." },
+  { icon:'📚', title:'Her Library',    line:"Her Dreams" },
   { icon:'🌿', title:'Her Forest',     line:'Barefoot on grass. Wind in trees. A girl who knows that the best therapy has no appointment.' },
   { icon:'🍦', title:'Her Ice Cream',  line:'May she always find the best flavour. May nobody ever judge how many scoops. This is non-negotiable.' },
   { icon:'🧸', title:'Her Little Joys',line:'Toys. Soft things. The silly stuff. May she never outgrow the things that make her eyes light up.' },
@@ -1382,6 +1382,7 @@ export default function BirthdaySurprise() {
           <div className="s4-hero s4-in s4-d1">
             <span className="s4-eyebrow">the next chapter</span>
             <h1 className="s4-title">Her <em>Dreams</em></h1>
+          <p className="s4-subtitle">As a friend, wishing you the best for everything you’re working towards 🌿</p>
             <p className="s4-subtitle">For her library, her forest, her future — and every quiet joy in between 🌿</p>
           </div>
           
@@ -1905,7 +1906,7 @@ export default function BirthdaySurprise() {
 
           <div className="s6-in s6-d2">
             <p className="s6-ey">one last thing</p>
-            <h2 className="s6-ttl">A small note<br /><em>to end this ✦</em></h2>
+            <h2 className="s6-ttl">A small note<br /><em>from a Friend to end this ✦</em></h2>
           </div>
 
           <div className="s6-rule s6-in s6-d2">
@@ -1940,11 +1941,11 @@ export default function BirthdaySurprise() {
 
           <div className="s6-in s6-d5">
             <p className="s6-ask" style={{marginBottom:'16px', fontSize:'1.45rem'}}>
-              As a friend, I'm grateful to know you.<br />
-              Wishing you whatever feels right for the road ahead.
+              As a friend, I am grateful to know you.<br />
+            Hope things go well for you in the coming time..
             </p>
             <button className="s6-cta" onClick={restart}>
-              🌸Wishing You a Year That Brings The Right People And Meaningful Connections Into Your Life.
+              🌸 Have A Great Day, My Friend..
             </button>
             <button className="s6-skip" onClick={restart}>
               ← go back to the beginning
