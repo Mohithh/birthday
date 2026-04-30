@@ -27,7 +27,7 @@ const PHOTOS = [
 ];
 
 const DREAM_CARDS = [
-  { icon:'📚', title:'Her Library',    line:"Her Dreams" },
+  { icon:'📚', title:'Her Library',    line:"A room of her own. Floor-to-ceiling shelves. Rain on the window. That's the dream — and she'll get there." },
   { icon:'🌿', title:'Her Forest',     line:'Barefoot on grass. Wind in trees. A girl who knows that the best therapy has no appointment.' },
   { icon:'🍦', title:'Her Ice Cream',  line:'May she always find the best flavour. May nobody ever judge how many scoops. This is non-negotiable.' },
   { icon:'🧸', title:'Her Little Joys',line:'Toys. Soft things. The silly stuff. May she never outgrow the things that make her eyes light up.' },
@@ -1941,7 +1941,7 @@ export default function BirthdaySurprise() {
 
           <div className="s6-in s6-d5">
             <p className="s6-ask" style={{marginBottom:'16px', fontSize:'1.45rem'}}>
-              As a friend, I am grateful to know you.<br />
+              I am grateful to know you.<br />
             Hope things go well for you in the coming time..
             </p>
             <button className="s6-cta" onClick={restart}>
